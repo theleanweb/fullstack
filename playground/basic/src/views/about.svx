@@ -1,0 +1,43 @@
+---
+title: My lovely article
+author: Dr. Fabuloso the Fabulous
+---
+
+<script lang="ts">
+  import Footer from "./footer.svelte";
+
+  export let count: number;
+  const data = JSON.stringify(count);
+</script>
+
+<head>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="module" src="./script.ts"></script>
+</head>
+
+# Hello
+
+# {title} by {author}
+
+<p class="w-full">svelte markdown</p>
+
+<div class="counter">
+  <Footer count={0} />
+</div>
+
+## List
+
+- one
+- tow
+
+{@html `<script id="data" type="application/json">${data}</script>`}
+
+```ts
+let age: number = 0;
+console.log("Hello, World!");
+
+let user = {
+  age: 10,
+  name: "joe",
+};
+```
