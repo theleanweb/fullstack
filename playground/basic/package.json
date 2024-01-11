@@ -1,11 +1,15 @@
 {
   "name": "basic",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build"
+    "build": "vite build",
+    "changeset": "changeset",
+    "prepublish": "pnpm build",
+    "version": "changeset version",
+    "release": "changeset publish"
   },
   "keywords": [],
   "author": "Joshua Amaju",
