@@ -36,8 +36,8 @@ import * as Env from "./env/Env.js";
 
 import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { devServer } from "./devServer/DevServer.js";
-import { island } from "./Island.js";
-import { compressFile } from "./Compress.js";
+// import { island } from "./Island.js";
+// import { compressFile } from "./Compress.js";
 
 interface Manifest {
   version: string;
