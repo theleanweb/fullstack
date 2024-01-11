@@ -81,7 +81,7 @@ const markdownPreprocessor = mdsvex() as PreprocessorGroup;
 
 const defaultPreprocessors = [
   markdownPreprocessor,
-  sveltePreprocessor(),
+  vitePreprocess(),
   // island(),
 ];
 

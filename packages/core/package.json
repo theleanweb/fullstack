@@ -1,10 +1,18 @@
 {
-  "name": "core",
-  "version": "1.0.0",
+  "name": "@leanweb/fullstack",
+  "version": "0.0.0",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/theleanweb/fullstack#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theleanweb/fullstack.git"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --w",
@@ -13,9 +21,12 @@
     "version": "changeset version",
     "release": "changeset publish"
   },
-  "keywords": [],
   "author": "Joshua Amaju",
   "license": "ISC",
+  "keywords": [
+    "fullstack",
+    "ssr"
+  ],
   "files": [
     "dist",
     "ssr.d.ts"
@@ -72,7 +83,11 @@
     },
     "./runtime": {
       "import": "./dist/runtime/index.js",
-      "types": "./dist/vite/index.d.ts"
+      "types": "./dist/runtime/index.d.ts"
+    },
+    "./runtime/*": {
+      "import": "./dist/runtime/*.js",
+      "types": "./dist/runtime/*.d.ts"
     }
   }
 }

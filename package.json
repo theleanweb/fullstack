@@ -2,15 +2,18 @@
   "name": "fullstack",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "author": "Joshua Amaju",
+  "license": "ISC",
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theleanweb/fullstack.git"
+  },
   "scripts": {
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish"
   },
-  "keywords": [],
-  "author": "Joshua Amaju",
-  "license": "ISC",
   "devDependencies": {
     "@changesets/cli": "^2.27.1"
   }

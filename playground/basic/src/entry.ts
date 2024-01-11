@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 // import { Render } from "core";
 
-import { Render } from "core/runtime";
+import { Render } from "@leanweb/fullstack/runtime";
 
 import Home from "./views/home.svelte";
 
