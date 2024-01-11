@@ -10,6 +10,7 @@
     "url": "https://github.com/theleanweb/fullstack.git"
   },
   "scripts": {
+    "build": "pnpm build",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish"
