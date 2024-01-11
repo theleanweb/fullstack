@@ -3,7 +3,7 @@ import { Hono } from "hono";
 
 import { Render } from "core/runtime";
 
-import Home from "./views/home.svelte?ssr";
+import Home from "./views/home.svelte";
 
 import Footer_ from "@/views/footer.svelte?ssr";
 
