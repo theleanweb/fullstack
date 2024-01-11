@@ -6,6 +6,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "dev": "tsc --w"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
     "ssr.d.ts"
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.27.1",
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.6",
@@ -63,6 +65,10 @@
     "./vite": {
       "import": "./dist/vite/Plugin.js",
       "types": "./dist/vite/Plugin.d.ts"
+    },
+    "./runtime": {
+      "import": "./dist/runtime/index.js",
+      "types": "./dist/vite/index.d.ts"
     }
   }
 }

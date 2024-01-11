@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 // import { Render } from "core";
 
+import { Render } from "core/runtime";
+
 import Home from "./views/home.svelte?ssr";
 
 import Footer_ from "@/views/footer.svelte?ssr";
@@ -8,6 +10,10 @@ import Footer_ from "@/views/footer.svelte?ssr";
 import About from "./views/about.svx?ssr";
 
 const app = new Hono();
+
+// Footer_
+
+console.log(Render.renderSSR(Footer_, {}));
 
 app.get("/", (ctx) => ctx.html('Go to <a href="/about">About</a>'));
 
