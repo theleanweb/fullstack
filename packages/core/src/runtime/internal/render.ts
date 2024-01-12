@@ -1,4 +1,4 @@
-// import { load } from "cheerio";
+import { load } from "cheerio";
 
 import {
   SSRComponent,
@@ -7,12 +7,11 @@ import {
 } from "../../types.js";
 
 export function render(_: SSRComponentOutput) {
-  // const document = load(_.html);
-  // const head = document("head");
-  // head.append(_.head);
-  // if (_.css.code) head.append(`<style>${_.css.code}</style>`);
-  // return document.html();
-  return "";
+  const document = load(_.html);
+  const head = document("head");
+  head.append(_.head);
+  if (_.css.code) head.append(`<style>${_.css.code}</style>`);
+  return document.html();
 }
 
 export function renderSSR(
@@ -26,9 +25,9 @@ export function renderSSR(
   } else {
     if ("render" in _ && typeof _.render == "function") {
       output = _.render(props ?? {});
+    } else {
+      throw new Error("Not a valid SSR component");
     }
-
-    throw new Error("Not a valid SSR component");
   }
 
   return render(output);
