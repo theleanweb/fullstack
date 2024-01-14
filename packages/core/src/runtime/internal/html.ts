@@ -1,5 +1,5 @@
 import { uneval } from "devalue";
 
-export function script_json(data: object) {
-  return `<script id="data" type="application/json">${uneval(data)}</script>`;
+export function script_json(data: object, { id }: { id?: string }) {
+  return `<script id="${id}" type="application/json">${uneval(data)}</script>`;
 }
