@@ -11,11 +11,17 @@ import { pipe } from "effect/Function";
 
 import * as AssetRef from "./assetRef/AssetRef.js";
 import { getRequest, setResponse, to_fs } from "./Utils.js";
+import { shouldPolyfill } from "../utils/platform.js";
+import { installPolyfills } from "../utils/polyfill.js";
 
 export function devServer(
   server: ViteDevServer,
   opts: { entry: string; cwd: string }
 ) {
+  if (shouldPolyfill) {
+    installPolyfills();
+  }
+
   const serve_static_middleware = server.middlewares.stack.find(
     (middleware) =>
       (middleware.handle as Function).name === "viteServeStaticMiddleware"
