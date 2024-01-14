@@ -268,8 +268,8 @@ export default function fullstack(userConfig?: Options) {
           const req = parseId(importer);
 
           if (isView(req.filename)) {
-            const id = req.filename.replace(cwd, "");
-            const msg = `Attempt to import private environment variables by ${id} might be a mistake`;
+            const name = color.bold(req.filename.replace(cwd, ""));
+            const msg = `Client module ${name} imports private environment variable(s)`;
             console.log(color.yellow(msg));
           }
         }
