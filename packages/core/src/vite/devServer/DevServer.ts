@@ -18,8 +18,6 @@ export function devServer(
   server: ViteDevServer,
   opts: { entry: string; cwd: string }
 ) {
-  console.log("shouldPolyfill: ", shouldPolyfill);
-
   if (shouldPolyfill) {
     installPolyfills();
   }
