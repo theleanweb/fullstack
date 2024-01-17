@@ -55,6 +55,7 @@
     "vite-tsconfig-paths": "^4.2.3"
   },
   "dependencies": {
+    "@remix-run/web-fetch": "^4.4.2",
     "cheerio": "1.0.0-rc.12",
     "devalue": "^4.3.2",
     "dom-serializer": "^2.0.0",

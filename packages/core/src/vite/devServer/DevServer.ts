@@ -18,6 +18,8 @@ export function devServer(
   server: ViteDevServer,
   opts: { entry: string; cwd: string }
 ) {
+  console.log("shouldPolyfill: ", shouldPolyfill);
+
   if (shouldPolyfill) {
     installPolyfills();
   }
@@ -63,17 +65,14 @@ export function devServer(
       Option.map((_) => path.join(opts.cwd, _))
     );
 
-    if (isCSSRequest(decoded)) {
-      if (Option.isSome(assetRef)) {
+    if (Option.isSome(assetRef)) {
+      if (isCSSRequest(decoded)) {
         const _ = await Effect.runPromise(resolve(assetRef.value));
         res.writeHead(200, { "content-type": "text/css" });
         res.end(`import '${to_fs(_.module.default)}';`);
+        return;
       }
 
-      return;
-    }
-
-    if (Option.isSome(assetRef)) {
       res.writeHead(200, { "content-type": "application/javascript" });
       res.end(`import '${to_fs(assetRef.value)}';`);
       return;
@@ -95,10 +94,4 @@ export function devServer(
       setResponse(res, response);
     }
   });
-}
-
-const script_file_regex = /\.(js|ts|mjs|mts)$/;
-
-function isScriptRequest(url: string) {
-  return script_file_regex.test(url);
 }

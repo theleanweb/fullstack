@@ -1,28 +1,18 @@
-import buffer from "node:buffer";
-import { webcrypto as crypto } from "node:crypto";
+import {
+  File as NodeFile,
+  fetch as nodeFetch,
+  FormData as NodeFormData,
+  Headers as NodeHeaders,
+  Request as NodeRequest,
+  Response as NodeResponse,
+} from "@remix-run/web-fetch";
 
-const File = buffer.File;
-
-const globals: Record<string, any> = {
-  crypto,
-  File,
-};
-
-// exported for dev/preview and node environments
-/**
- * Make various web APIs available as globals:
- * - `crypto`
- * - `File`
- */
 export function installPolyfills() {
-  for (const name in globals) {
-    if (name in globalThis) continue;
+  global.File = NodeFile;
 
-    Object.defineProperty(globalThis, name, {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: globals[name],
-    });
-  }
+  global.Headers = NodeHeaders as unknown as typeof Headers;
+  global.Request = NodeRequest as typeof Request;
+  global.Response = NodeResponse as unknown as typeof Response;
+  global.fetch = nodeFetch as typeof fetch;
+  global.FormData = NodeFormData;
 }
