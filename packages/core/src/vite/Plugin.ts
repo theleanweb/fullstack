@@ -390,6 +390,8 @@ export default function fullstack(userConfig?: Options) {
           configFile: false,
           clearScreen: false,
           logLevel: "silent",
+          base: resolvedViteConfig.base,
+          envPrefix: resolvedViteConfig.envPrefix,
           // customLogger: quietLogger,
           // We apply obfuscation to prevent vite:build-html plugin from freaking out
           // when it sees a svelte script at the beginning of the html file
