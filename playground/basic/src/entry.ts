@@ -11,15 +11,11 @@ import About from "./views/about.svx?ssr";
 
 const app = new Hono();
 
-// Footer_
-
-console.log(Home);
-
-app.get("/", (ctx) => ctx.html('Go to <a href="/about">About</a>'));
+app.get("/", (ctx) => ctx.html('Go to <a href="/about">About 4</a>'));
 
 app.get("/home/:id?", (ctx) => {
   const id = ctx.req.param("id");
-  const count = id !== undefined ? parseFloat(id) : 10;
+  const count = id !== undefined ? parseFloat(id) : 11;
   return ctx.html(Render.renderSSR(Home, { count }));
 });
 
