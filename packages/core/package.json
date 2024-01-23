@@ -89,6 +89,9 @@
     "./runtime/*": {
       "import": "./dist/runtime/*.js",
       "types": "./dist/runtime/*.d.ts"
+    },
+    "./ssr": {
+      "types": "./ssr.d.ts"
     }
   }
 }
