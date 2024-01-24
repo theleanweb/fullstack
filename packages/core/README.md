@@ -1,11 +1,12 @@
 # Core
 
-## Features
+## ✨ Features
 
+- Templates with Svelte and Markdown
 - Markdown (.svx)
 - Hot reload
 - HTML asset bundling
-- Islands *(coming soon)*
+- Islands _(coming soon)_
 
 ## Configuration
 
