@@ -307,6 +307,12 @@ export default function fullstack(userConfig?: Options) {
     name: "fullstack:dev",
     configureServer(server) {
       return () => {
+        server.watcher.on('change', (file) => {
+          if (file.endsWith(entry.value)) {
+            server.ws.send({ type: 'full-reload' });
+          }
+        });
+
         return devServer(server, { cwd, entry: entry.value });
       };
     },
