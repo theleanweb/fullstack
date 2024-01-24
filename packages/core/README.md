@@ -3,8 +3,9 @@
 ## Features
 
 - Markdown (.svx)
+- Hot reload
 - HTML asset bundling
-- Islands (coming soon)
+- Islands *(coming soon)*
 
 ## Configuration
 
