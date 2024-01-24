@@ -226,6 +226,9 @@ export default function fullstack(userConfig?: Options) {
             },
           ],
         },
+        optimizeDeps: {
+          exclude: ["@leanweb/fullstack", "$env"],
+        },
       };
     },
   };
@@ -307,9 +310,9 @@ export default function fullstack(userConfig?: Options) {
     name: "fullstack:dev",
     configureServer(server) {
       return () => {
-        server.watcher.on('change', (file) => {
+        server.watcher.on("change", (file) => {
           if (file.endsWith(entry.value)) {
-            server.ws.send({ type: 'full-reload' });
+            server.ws.send({ type: "full-reload" });
           }
         });
 
