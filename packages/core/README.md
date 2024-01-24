@@ -1,5 +1,11 @@
 # Core
 
+## Features
+
+- Markdown (.svx)
+- HTML asset bundling
+- Islands (coming soon)
+
 ## Configuration
 
 Fullstack is simple a vite plugin, you configure it like any other vite plugin
@@ -19,7 +25,7 @@ export default defineConfig({
 
 ### API
 
-- `publicEnvPrefix`: default PUBLIC\_
+- `publicEnvPrefix`: default `PUBLIC\_`
 - `extensions`: default `.svelte`, `.svx`
 - `serverEntry`: default src/entry.{js,ts,mjs,mts}
 - `preprocess`: see [here](https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#preprocess)
