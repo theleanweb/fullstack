@@ -11,6 +11,7 @@ import type { ConfigEnv, Plugin, ResolvedConfig, Rollup } from "vite";
 import * as Vite from "vite";
 
 import { PreprocessorGroup } from "svelte/compiler";
+import * as compiler from "svelte/compiler";
 
 import { mdsvex } from "mdsvex";
 
@@ -36,7 +37,7 @@ import * as Env from "./env/Env.js";
 
 import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { devServer } from "./devServer/DevServer.js";
-// import { island } from "./Island.js";
+import { island } from "./Island.js";
 // import { compressFile } from "./Compress.js";
 
 interface Manifest {
@@ -79,11 +80,7 @@ const noServerEntryMsg = (file: string) =>
 
 const markdownPreprocessor = mdsvex() as PreprocessorGroup;
 
-const defaultPreprocessors = [
-  markdownPreprocessor,
-  vitePreprocess(),
-  // island(),
-];
+const defaultPreprocessors = [markdownPreprocessor, vitePreprocess(), island()];
 
 const cwd = process.cwd();
 
@@ -262,7 +259,7 @@ export default function fullstack(userConfig?: Options) {
     },
 
     resolveId(source, importer) {
-      // treat $env/static/[public|private] as virtual
+      // treat $env/[public|private] as virtual
       if (source.startsWith("$env/")) {
         if (importer) {
           const req = parseId(importer);
@@ -415,6 +412,32 @@ export default function fullstack(userConfig?: Options) {
     },
   };
 
+  const pluginIsland: Plugin = {
+    name: "fullstack:island",
+    transform: {
+      order: "pre",
+      async handler(code, id) {
+        const { filename, ...req } = parseRequest(id);
+
+        if (!isView(filename)) return;
+
+        // console.log(id);
+
+        // if (!req.ssr) return;
+
+        const r = await compiler.preprocess(
+          code,
+          [vitePreprocess(), island()],
+          { filename }
+        );
+
+        // console.log(r.toString?.());
+
+        return { code: r.code, map: r.map as any };
+      },
+    },
+  };
+
   return [
     setup,
     clientEnv,
@@ -422,6 +445,7 @@ export default function fullstack(userConfig?: Options) {
     pluginDev,
     pluginEnv,
     pluginBuild,
+    // pluginIsland,
     tsconfigPaths(),
     svelte(svelteOptions),
   ];
