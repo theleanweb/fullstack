@@ -1,5 +1,5 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "allowJs": false,
     "checkJs": false,
@@ -36,13 +36,13 @@
     "strict": true,
     "strictNullChecks": true,
     "stripInternal": true,
-    "target": "ES2022",
+    "target": "ES2022"
   },
   "include": [],
   "exclude": ["**/node_modules/**", "**/build/**", "**/dist/**"],
   "references": [
     {
       "path": "packages/core"
-    },
+    }
   ]
 }
