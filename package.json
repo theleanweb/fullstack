@@ -10,12 +10,14 @@
     "url": "https://github.com/theleanweb/fullstack.git"
   },
   "scripts": {
+    "test": "pnpm test -r",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish",
     "build": "tsc -b tsconfig.build.json"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.1"
+    "@changesets/cli": "^2.27.1",
+    "playwright": "^1.41.1"
   }
 }
