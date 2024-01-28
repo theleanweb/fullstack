@@ -67,6 +67,7 @@
     "htmlparser2": "^9.0.0",
     "kleur": "^4.1.5",
     "magic-string": "^0.30.5",
+    "mime": "^4.0.1",
     "mlly": "^1.5.0",
     "parse-es-import": "^0.6.0",
     "parse-imports-exports": "^0.0.9",

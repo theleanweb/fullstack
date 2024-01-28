@@ -37,6 +37,7 @@ import * as Env from "./env/Env.js";
 
 import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { devServer } from "./devServer/DevServer.js";
+import { previewServer } from "./preview/Server.js";
 import { island } from "./Island.js";
 // import { compressFile } from "./Compress.js";
 
@@ -179,8 +180,6 @@ export default function fullstack(userConfig?: Options) {
 
   // console.log(manifest_);
 
-  fsExtra.remove(assetsBuildDirectory);
-
   const setup: Plugin = {
     name: "fullstack:setup",
     configResolved(config) {
@@ -215,7 +214,7 @@ export default function fullstack(userConfig?: Options) {
           ssrEmitAssets: true,
           copyPublicDir: false,
           rollupOptions: {
-            input: entry.value,
+            input: { index: entry.value },
           },
         },
         resolve: {
@@ -339,6 +338,10 @@ export default function fullstack(userConfig?: Options) {
     apply: "build",
     name: "fullstack:build",
 
+    buildStart() {
+      fsExtra.remove(assetsBuildDirectory);
+    },
+
     async writeBundle() {
       // fsExtra.remove(generatedDir);
 
@@ -421,6 +424,13 @@ export default function fullstack(userConfig?: Options) {
     },
   };
 
+  const pluginPreview: Plugin = {
+    name: "fullstack:preview",
+    configurePreviewServer(server) {
+      return () => previewServer(server);
+    },
+  };
+
   const pluginIsland: Plugin = {
     name: "fullstack:island",
     transform: {
@@ -454,6 +464,7 @@ export default function fullstack(userConfig?: Options) {
     pluginDev,
     pluginEnv,
     pluginBuild,
+    pluginPreview,
     // pluginIsland,
     tsconfigPaths(),
     svelte(svelteOptions),
