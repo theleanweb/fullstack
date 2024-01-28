@@ -5,6 +5,8 @@ import { isCSSRequest } from "vite";
 
 import type { Hono } from "hono";
 
+import color from "kleur";
+
 import * as Option from "effect/Option";
 import * as Effect from "effect/Effect";
 import { pipe } from "effect/Function";
@@ -13,6 +15,8 @@ import * as AssetRef from "./assetRef/AssetRef.js";
 import { getRequest, setResponse, to_fs } from "./Utils.js";
 import { shouldPolyfill } from "../utils/platform.js";
 import { installPolyfills } from "../utils/polyfill.js";
+
+const VITE_HTML_CLIENT = '<script type="module" src="/@vite/client"></script>';
 
 export function devServer(
   server: ViteDevServer,
@@ -80,6 +84,33 @@ export function devServer(
     const serverEntry = await server.ssrLoadModule(opts.entry);
 
     const app: Hono = serverEntry.default;
+
+    app.onError(function (e) {
+      const html = /*html*/ `
+      <html>
+        <head>${VITE_HTML_CLIENT}</head>
+        <body><pre><code>Internal Server Error</code></pre></body>
+      </html>
+      `;
+
+      console.error(color.bold().red(String(e)));
+
+      server.ws.send({
+        type: "error",
+        err: {
+          ...e,
+          stack: e.stack!,
+          // these properties are non-enumerable and will
+          // not be serialized unless we explicitly include them
+          message: e.message,
+        },
+      });
+
+      return new Response(html, {
+        status: 500,
+        headers: { "content-type": "text/html" },
+      });
+    });
 
     const response = await app.fetch(request);
 
