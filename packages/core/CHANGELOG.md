@@ -1,5 +1,11 @@
 # @leanweb/fullstack
 
+## 0.1.1
+
+### Patch Changes
+
+- 91e1d71: Fix missing ssr module type import
+
 ## 0.1.0
 
 ### Minor Changes
