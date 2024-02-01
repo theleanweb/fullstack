@@ -1,5 +1,17 @@
 # @leanweb/fullstack
 
+## 0.1.0
+
+### Minor Changes
+
+- 78c22ec: Add preview server
+
+### Patch Changes
+
+- f533507: Properly encode and decode HTML JSON data
+- de557fc: Fix missing types file for ssr declaration file
+- c5b13e1: Handle user app error during dev mode
+
 ## 0.0.2
 
 ### Patch Changes
