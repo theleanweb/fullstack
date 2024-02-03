@@ -6,17 +6,19 @@ interface SSRComponentOutput {
 
 type SSRComponentProps = Record<string, any>;
 
-interface SSRComponent {
-  render(props: SSRComponentProps): SSRComponentOutput;
+interface SSRComponent<T> {
+  render(props: T): SSRComponentOutput;
 }
 
 declare module "*.svelte?ssr" {
-  const Component: SSRComponent;
+  export interface Props {}
+
+  const Component: SSRComponent<Props>;
   export default Component;
 }
 
 declare module "*.svx?ssr" {
-  const Component: SSRComponent;
+  const Component: SSRComponent<any>;
   export const metadata: Record<string, string>;
   export default Component;
 }
