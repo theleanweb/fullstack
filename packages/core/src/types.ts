@@ -6,6 +6,6 @@ export interface SSRComponentOutput {
 
 export type SSRComponentProps = Record<string, any>;
 
-export interface SSRComponent {
-  render(props: SSRComponentProps): SSRComponentOutput;
+export interface SSRComponent<T extends SSRComponentProps> {
+  render(props: T): SSRComponentOutput;
 }

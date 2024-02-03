@@ -15,7 +15,7 @@ export function render(_: SSRComponentOutput) {
 }
 
 export function renderSSR(
-  _: SSRComponent | SSRComponentOutput,
+  _: SSRComponent<any> | SSRComponentOutput,
   props?: SSRComponentProps
 ): string {
   let output: SSRComponentOutput;
