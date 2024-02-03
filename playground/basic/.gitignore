@@ -1,5 +1,5 @@
 .cache
 node_modules
 .env
-public/build
+public/assets
 env.d.ts

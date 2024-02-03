@@ -3,18 +3,12 @@
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 
-import router from "./dist/entry.js";
-
-router.use(
-  "/assets/*",
-  serveStatic({
-    root: "./public",
-    rewriteRequestPath: (path) => path.replace(/^\/assets/, "/build"),
-  })
-);
+import router from "./dist/index.js";
 
 router.use("/*", serveStatic({ root: "./public" }));
 
-serve({fetch: router.fetch, port: 4000});
+const server = serve({ fetch: router.fetch, port: 4000 });
 
-console.log("Server running");
+server.listen(() => {
+  console.log("Server running");
+});
