@@ -88,13 +88,11 @@ const cwd = process.cwd();
 export default function fullstack(userConfig?: Options) {
   const root = ".cache";
 
-  const assetsPath = "/build";
   const publicDirectory = "public";
-  const assetsBuildDirectory = "public/build";
+  // const assetsBuildDirectory = "public/build";
 
   const buildDir = path.join(root, "build");
   const generatedDir = path.join(root, "generated");
-  const buildAssetsDir = path.join(buildDir, "assets");
 
   const configResult = Config.parse(userConfig ?? {}).pipe(
     Effect.either,
@@ -339,17 +337,20 @@ export default function fullstack(userConfig?: Options) {
     name: "fullstack:build",
 
     buildStart() {
-      fsExtra.remove(assetsBuildDirectory);
+      const assets = resolvedViteConfig.build.assetsDir;
+      const dir = path.join(publicDirectory, assets);
+      fsExtra.remove(dir);
     },
 
     async writeBundle() {
-      // fsExtra.remove(generatedDir);
+      const assets = resolvedViteConfig.build.assetsDir;
 
-      if (fs.existsSync(buildAssetsDir)) {
+      const src = path.join(buildDir, assets);
+      const dest = path.join(publicDirectory, assets);
+
+      if (fs.existsSync(src)) {
         // const files = fs.readdirSync(buildAssetsDir);
-
         // const files_ = files.map((file) => path.resolve(buildAssetsDir, file));
-
         // await Promise.all(
         //   files_.flatMap((file) => [
         //     compressFile(file, "gz"),
@@ -357,10 +358,8 @@ export default function fullstack(userConfig?: Options) {
         //   ])
         // );
 
-        fsExtra.moveSync(buildAssetsDir, assetsBuildDirectory);
+        fsExtra.moveSync(src, dest);
       }
-
-      // fsExtra.remove(buildDir);
 
       fsExtra.remove(root);
     },

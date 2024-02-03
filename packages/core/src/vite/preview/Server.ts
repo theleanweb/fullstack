@@ -1,10 +1,9 @@
-import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 import type { PreviewServer } from "vite";
 
-import mime from "mime";
+import sirv from "sirv";
 
 import type { Hono } from "hono";
 
@@ -19,35 +18,25 @@ export async function previewServer(server: PreviewServer) {
 
   const protocol = server.config.preview.https ? "https" : "http";
 
-  const dir = server.config.build.outDir;
   const publicDir = server.config.publicDir;
+  const { outDir, assetsDir } = server.config.build;
 
-  const module = await import(pathToFileURL(path.join(dir, "index.js")).href);
+  const module = await import(
+    pathToFileURL(path.join(outDir, "index.js")).href
+  );
 
   const app: Hono = module.default;
 
-  server.middlewares.use((req, res, next) => {
-    const host = req.headers["host"];
-    const base = `${protocol}://${host}`;
-    const url = new URL(base + req.url);
-    const decoded = decodeURI(url.pathname);
-
-    const contentType = mime.getType(url.pathname);
-    const rewrite = decoded.replace(/^\/assets/, "/build");
-
-    if (contentType) {
-      res.setHeader("Content-Type", contentType);
-    }
-
-    const file = path.join(publicDir, rewrite);
-
-    if (fs.existsSync(file)) {
-      const contents = fs.createReadStream(file);
-      contents.pipe(res);
-    } else {
-      next();
-    }
-  });
+  server.middlewares.use(
+    sirv(publicDir, {
+      setHeaders: (res, pathname) => {
+        // only apply to build output directory
+        if (pathname.startsWith(`/${assetsDir}`)) {
+          res.setHeader("cache-control", "public,max-age=31536000,immutable");
+        }
+      },
+    })
+  );
 
   server.middlewares.use(async (req, res) => {
     const host = req.headers["host"];
