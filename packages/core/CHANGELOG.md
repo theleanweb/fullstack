@@ -1,5 +1,11 @@
 # @leanweb/fullstack
 
+## 0.1.2
+
+### Patch Changes
+
+- 48b0e5c: Use vite asset build directory instead of our custom build directory
+
 ## 0.1.1
 
 ### Patch Changes
