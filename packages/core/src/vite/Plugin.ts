@@ -10,8 +10,8 @@ import color from "kleur";
 import type { ConfigEnv, Plugin, ResolvedConfig, Rollup } from "vite";
 import * as Vite from "vite";
 
-import { PreprocessorGroup } from "svelte/compiler";
 import * as compiler from "svelte/compiler";
+import { PreprocessorGroup } from "svelte/compiler";
 
 import { mdsvex } from "mdsvex";
 
@@ -20,10 +20,6 @@ import {
   Options as SvelteOptions,
   vitePreprocess,
 } from "@sveltejs/vite-plugin-svelte";
-
-import sveltePreprocessor from "svelte-preprocess";
-
-import tsconfigPaths from "vite-tsconfig-paths";
 
 import * as Effect from "effect/Effect";
 import * as Either from "effect/Either";
@@ -37,8 +33,8 @@ import * as Env from "./env/Env.js";
 
 import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { devServer } from "./devServer/DevServer.js";
-import { previewServer } from "./preview/Server.js";
 import { island } from "./Island.js";
+import { previewServer } from "./preview/Server.js";
 // import { compressFile } from "./Compress.js";
 
 interface Manifest {
@@ -465,7 +461,6 @@ export default function fullstack(userConfig?: Options) {
     pluginBuild,
     pluginPreview,
     // pluginIsland,
-    tsconfigPaths(),
     svelte(svelteOptions),
   ];
 }
