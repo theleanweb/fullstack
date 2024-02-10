@@ -14,7 +14,7 @@
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish",
-    "build": "pnpm build -r"
+    "build-all": "pnpm run build -r"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

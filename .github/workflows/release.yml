@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - run: pnpm install
-      - run: pnpm build
+      - run: pnpm build-all
 
       - name: create release pull request or publish
         uses: changesets/action@v1
