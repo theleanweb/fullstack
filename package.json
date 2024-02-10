@@ -14,7 +14,6 @@
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish",
-    "ci:publish": "pnpm publish -r",
     "build": "tsc -b tsconfig.build.json"
   },
   "devDependencies": {
