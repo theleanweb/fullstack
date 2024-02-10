@@ -80,3 +80,4 @@ export const rules = [
 
 export type Rule = (typeof rules)[number];
 export type Tags = (typeof rules)[number]["tag"];
+export type Attr = (typeof rules)[number]["attribute"];

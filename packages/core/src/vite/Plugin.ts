@@ -318,11 +318,17 @@ export default function fullstack(userConfig?: Options) {
         const { ssr, filename } = parseRequest(id);
 
         if (isView(filename) && ssr) {
-          const result = await Effect.runPromise(
-            AssetRef.transform(code, { cwd, filename })
+          const result = await compiler.preprocess(
+            code,
+            [
+              markdownPreprocessor,
+              vitePreprocess(),
+              AssetRef.preprocessor({ cwd }),
+            ],
+            { filename }
           );
 
-          return { code: result };
+          return { code: result.code, map: result.map?.toString() };
         }
       },
     },
