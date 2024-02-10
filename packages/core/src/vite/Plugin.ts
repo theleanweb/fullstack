@@ -37,13 +37,13 @@ import { island } from "./Island.js";
 import { previewServer } from "./preview/Server.js";
 // import { compressFile } from "./Compress.js";
 
-interface Manifest {
-  version: string;
-  assetsPath: string;
-  serverEntry: string;
-  publicDirectory: string;
-  assetsBuildDirectory: string;
-}
+// interface Manifest {
+//   version: string;
+//   assetsPath: string;
+//   serverEntry: string;
+//   publicDirectory: string;
+//   assetsBuildDirectory: string;
+// }
 
 type Env = Record<"public" | "private", Record<string, any>>;
 
@@ -328,7 +328,7 @@ export default function fullstack(userConfig?: Options) {
             { filename }
           );
 
-          return { code: result.code, map: result.map?.toString() };
+          return { code: result.code, map: result.map?.toString() ?? "" };
         }
       },
     },
@@ -401,7 +401,7 @@ export default function fullstack(userConfig?: Options) {
           clearScreen: false,
           logLevel: "silent",
           base: resolvedViteConfig.base,
-          envPrefix: resolvedViteConfig.envPrefix,
+          envPrefix: resolvedViteConfig.envPrefix as string[],
           // customLogger: quietLogger,
           // We apply obfuscation to prevent vite:build-html plugin from freaking out
           // when it sees a svelte script at the beginning of the html file
@@ -432,31 +432,31 @@ export default function fullstack(userConfig?: Options) {
     },
   };
 
-  const pluginIsland: Plugin = {
-    name: "fullstack:island",
-    transform: {
-      order: "pre",
-      async handler(code, id) {
-        const { filename, ...req } = parseRequest(id);
+  // const pluginIsland: Plugin = {
+  //   name: "fullstack:island",
+  //   transform: {
+  //     order: "pre",
+  //     async handler(code, id) {
+  //       const { filename, ...req } = parseRequest(id);
 
-        if (!isView(filename)) return;
+  //       if (!isView(filename)) return;
 
-        // console.log(id);
+  //       // console.log(id);
 
-        // if (!req.ssr) return;
+  //       // if (!req.ssr) return;
 
-        const r = await compiler.preprocess(
-          code,
-          [vitePreprocess(), island()],
-          { filename }
-        );
+  //       const r = await compiler.preprocess(
+  //         code,
+  //         [vitePreprocess(), island()],
+  //         { filename }
+  //       );
 
-        // console.log(r.toString?.());
+  //       // console.log(r.toString?.());
 
-        return { code: r.code, map: r.map as any };
-      },
-    },
-  };
+  //       return { code: r.code, map: r.map as any };
+  //     },
+  //   },
+  // };
 
   return [
     setup,

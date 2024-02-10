@@ -1,24 +1,23 @@
-import { inspect } from "util";
-import url from "node:url";
+// import { inspect } from "util";
+// import url from "node:url";
 import path from "node:path";
 
-import { pipe } from "effect/Function";
-import * as Array from "effect/ReadonlyArray";
-import * as Record from "effect/ReadonlyRecord";
+// import { pipe } from "effect/Function";
+// import * as Array from "effect/ReadonlyArray";
 
-import { Plugin } from "vite";
+// import { Plugin } from "vite";
 
-import { PreprocessorGroup, parse, walk, preprocess } from "svelte/compiler";
-import MagicString from "magic-string";
-import { dedent } from "ts-dedent";
 import * as lexer from "es-module-lexer";
-import { parseImportsExports, ImportsExports } from "parse-imports-exports";
+import MagicString from "magic-string";
+import { ImportsExports, parseImportsExports } from "parse-imports-exports";
+import { PreprocessorGroup, parse, preprocess, walk } from "svelte/compiler";
+import { dedent } from "ts-dedent";
 
-import { findStaticImports, parseStaticImport, ParsedStaticImport } from "mlly";
+import { ParsedStaticImport, findStaticImports } from "mlly";
 
 import { PREFIX } from "./devServer/assetRef/AssetRef.js";
 
-type Loc = { line: number; column: number };
+// type Loc = { line: number; column: number };
 
 // interface AttributeValue {
 //   start: 1157;
@@ -33,13 +32,13 @@ type Loc = { line: number; column: number };
 //   };
 // }
 
-interface RawValue {
-  start: 1201;
-  end: 1204;
-  type: "Text";
-  raw: string;
-  data: string;
-}
+// interface RawValue {
+//   start: 1201;
+//   end: 1204;
+//   type: "Text";
+//   raw: string;
+//   data: string;
+// }
 
 type AttributeValue = boolean | "";
 
@@ -69,7 +68,7 @@ export function island(): PreprocessorGroup {
 
       if (true) {
         const s = new MagicString(args.content, {
-          filename: args.filename,
+          filename: args.filename ?? "",
         });
 
         const ast = parse(args.content);
@@ -192,7 +191,7 @@ export function island(): PreprocessorGroup {
                   let importUrl = named?.imports;
 
                   if (args.filename && named) {
-                    const [filename, query] = named.specifier.split(`?`, 2);
+                    const [_, query] = named.specifier.split(`?`, 2);
 
                     const search = new URLSearchParams(query);
 
@@ -256,7 +255,7 @@ export function island(): PreprocessorGroup {
 }
 
 export function pluginIsland() {
-  const plugin: Plugin = {
-    name: "fullstack:island",
-  };
+  // const plugin: Plugin = {
+  //   name: "fullstack:island",
+  // };
 }
