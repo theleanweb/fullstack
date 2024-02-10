@@ -1,5 +1,12 @@
 # @leanweb/fullstack
 
+## 0.1.3
+
+### Patch Changes
+
+- 861f6ab: Make the asset reference parser in dev mode use the svelte parser to avoid closing components as self closing tags and mismatch between svelte syntax and standard HTML syntax
+- 861f6ab: Export standalone HTML module
+
 ## 0.1.2
 
 ### Patch Changes
