@@ -14,7 +14,7 @@
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish",
-    "publish-all": "pnpm publish -r"
+    "build": "tsc -b tsconfig.build.json"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
