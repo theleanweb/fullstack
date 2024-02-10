@@ -19,7 +19,7 @@
     "changeset": "changeset",
     "prepublish": "pnpm build",
     "version": "changeset version",
-    "release": "changeset publish"
+    "release": "pnpm build && changeset publish"
   },
   "author": "Joshua Amaju",
   "license": "ISC",
