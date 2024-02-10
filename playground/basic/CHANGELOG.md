@@ -1,5 +1,13 @@
 # basic
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies [861f6ab]
+- Updated dependencies [861f6ab]
+  - @leanweb/fullstack@0.1.3
+
 ## 1.0.5
 
 ### Patch Changes
