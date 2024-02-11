@@ -71,7 +71,7 @@ export function devServer(
       if (isCSSRequest(decoded)) {
         const _ = await Effect.runPromise(resolve(assetRef.value));
         res.writeHead(200, { "content-type": "text/css" });
-        res.end(`import '${to_fs(_.module.default)}';`);
+        res.end(_.module.default);
         return;
       }
 
