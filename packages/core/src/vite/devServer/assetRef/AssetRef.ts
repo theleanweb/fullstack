@@ -10,6 +10,7 @@ import type { BaseNode, Element } from "svelte/types/compiler/interfaces";
 import MagicString from "magic-string";
 
 import { Rule, Tags, rules } from "./Rules.js";
+import { ResolvedConfig } from "vite";
 
 const rules_by_tag = pipe(
   rules,
@@ -32,9 +33,11 @@ export const PREFIX = "s";
 
 export function preprocessor({
   cwd,
+  config,
 }: // filename,
 {
   cwd: string;
+  config: ResolvedConfig;
   // filename: string;
 }): PreprocessorGroup {
   return {
@@ -58,39 +61,44 @@ export function preprocessor({
         return visitor(node);
       }
 
-      // @ts-expect-error
-      walk(ast.html, {
-        enter(node) {
-          // @ts-expect-error
-          walkChildren(node, (node) => {
-            if (node.type == "Element") {
-              const node_: Element = node as any;
+      if (config.command == "serve") {
+        // @ts-expect-error
+        walk(ast.html, {
+          enter(node) {
+            // @ts-expect-error
+            walkChildren(node, (node) => {
+              if (node.type == "Element") {
+                const node_: Element = node as any;
 
-              const name = node_.name as Tags;
-              const rules = rules_by_tag[name];
+                const name = node_.name as Tags;
+                const rules = rules_by_tag[name];
 
-              if (rules) {
-                for (let rule of rules) {
-                  if (name === rule.tag) {
-                    for (let attr of node_.attributes) {
-                      if (
-                        attr.type == "Attribute" &&
-                        attr.name == rule.attribute
-                      ) {
-                        const value = attr.value;
+                if (rules) {
+                  for (let rule of rules) {
+                    if (name === rule.tag) {
+                      for (let attr of node_.attributes) {
+                        if (
+                          attr.type == "Attribute" &&
+                          attr.name == rule.attribute
+                        ) {
+                          const value = attr.value;
 
-                        for (let val of value) {
-                          const content = val.raw;
+                          for (let val of value) {
+                            const content = val.raw;
 
-                          if (
-                            val &&
-                            val.type == "Text" &&
-                            isLocalPath(content)
-                          ) {
-                            const resolved = path.resolve(parsed.dir, content);
-                            const source = path.relative(cwd, resolved);
-                            const src = `${content}?${PREFIX}=${source}`;
-                            s.update(val.start, val.end, src);
+                            if (
+                              val &&
+                              val.type == "Text" &&
+                              isLocalPath(content)
+                            ) {
+                              const resolved = path.resolve(
+                                parsed.dir,
+                                content
+                              );
+                              const source = path.relative(cwd, resolved);
+                              const src = `${content}?${PREFIX}=${source}`;
+                              s.update(val.start, val.end, src);
+                            }
                           }
                         }
                       }
@@ -98,10 +106,10 @@ export function preprocessor({
                   }
                 }
               }
-            }
-          });
-        },
-      });
+            });
+          },
+        });
+      }
 
       return { code: s.toString(), map: s.generateMap() };
     },

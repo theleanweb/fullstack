@@ -10,7 +10,6 @@ import color from "kleur";
 import type { ConfigEnv, Plugin, ResolvedConfig, Rollup } from "vite";
 import * as Vite from "vite";
 
-import * as compiler from "svelte/compiler";
 import { PreprocessorGroup } from "svelte/compiler";
 
 import { mdsvex } from "mdsvex";
@@ -33,7 +32,6 @@ import * as Env from "./env/Env.js";
 
 import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { devServer } from "./devServer/DevServer.js";
-import { island } from "./Island.js";
 import { previewServer } from "./preview/Server.js";
 // import { compressFile } from "./Compress.js";
 
@@ -75,11 +73,11 @@ const noDefaultServerEntryMsg = `Couldn't find the default ${pattern} entry file
 const noServerEntryMsg = (file: string) =>
   `Couldn't find entry file ${file}. Please make sure the file exists.`;
 
+const cwd = process.cwd();
+
 const markdownPreprocessor = mdsvex() as PreprocessorGroup;
 
-const defaultPreprocessors = [markdownPreprocessor, vitePreprocess(), island()];
-
-const cwd = process.cwd();
+const defaultPreprocessors = [markdownPreprocessor, vitePreprocess()];
 
 export default function fullstack(userConfig?: Options) {
   const root = ".cache";
@@ -122,15 +120,6 @@ export default function fullstack(userConfig?: Options) {
       ? [...config.preprocess, ...defaultPreprocessors]
       : [config.preprocess, ...defaultPreprocessors]
     : defaultPreprocessors;
-
-  const svelteOptions: SvelteOptions = {
-    preprocess: preprocessors,
-    extensions: config.extensions,
-    compilerOptions: {
-      ...compilerOptions,
-      hydratable: compilerOptions?.hydratable ?? true,
-    },
-  };
 
   const serverEntry = glob(config.serverEntry, { cwd });
 
@@ -312,26 +301,6 @@ export default function fullstack(userConfig?: Options) {
         return devServer(server, { cwd, entry: entry.value });
       };
     },
-    transform: {
-      order: "pre",
-      async handler(code, id) {
-        const { ssr, filename } = parseRequest(id);
-
-        if (isView(filename)) {
-          const result = await compiler.preprocess(
-            code,
-            [
-              markdownPreprocessor,
-              vitePreprocess(),
-              AssetRef.preprocessor({ cwd }),
-            ],
-            { filename }
-          );
-
-          return { code: result.code, map: result.map?.toString() ?? "" };
-        }
-      },
-    },
   };
 
   const pluginBuild: Plugin = {
@@ -457,6 +426,33 @@ export default function fullstack(userConfig?: Options) {
   //     },
   //   },
   // };
+
+  /**
+   * The initial approach of preprocessing components to attach the real disk location
+   * didn't play nice with the main svelte plugin and preprocessors. So we have to include our
+   * preprocessor to the svelte vite plugin, but the point at which that happens we can't tell if we're in
+   * serve or build mode.
+   *
+   * We don't want to attach any asset reference in build mode os that vite can find them itself. This is a workaround
+   * to grab the resolved config when we need it.
+   */
+  const configProxy = new Proxy({} as ResolvedConfig, {
+    get(_, p) {
+      return resolvedViteConfig[p as keyof typeof resolvedViteConfig];
+    },
+  });
+
+  const svelteOptions: SvelteOptions = {
+    extensions: config.extensions,
+    preprocess: [
+      ...preprocessors,
+      AssetRef.preprocessor({ cwd, config: configProxy }),
+    ],
+    compilerOptions: {
+      ...compilerOptions,
+      hydratable: compilerOptions?.hydratable ?? true,
+    },
+  };
 
   return [
     setup,
