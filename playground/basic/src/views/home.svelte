@@ -4,8 +4,6 @@
 
   import math, { pi } from "./math";
 
-  import href from "./main.css";
-
   export let count: number;
   export let counter: string;
 
@@ -18,6 +16,8 @@
   function hydrate(node: any) {
     console.log("use: ", node, math);
   }
+
+  const href = "./style.css";
 </script>
 
 <!DOCTYPE html>
@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="./style.css" /> -->
     <link rel="stylesheet" href="./main.css" />
     <link rel="stylesheet" href="./style.css" />
-    <link rel="stylesheet" {href} />
+    <link rel="stylesheet" id="mustache" {href} />
     <script type="module" src="./script.ts"></script>
     <title>40 Document</title>
   </head>
@@ -45,11 +45,11 @@
 
     <img src="/favicon.png" alt="favicon" />
 
-    <!-- <Island count={0} />
+    <!-- <Island count={0} /> -->
 
-    <Footer __island {count} />
+    <Footer {count} />
 
-    <custom-button __island aria></custom-button> -->
+    <!-- <custom-button __island aria></custom-button> -->
 
     {#each num as n}
       <p>{n}</p>

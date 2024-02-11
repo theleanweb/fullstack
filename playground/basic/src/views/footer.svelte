@@ -20,6 +20,8 @@
 
 <p>double: {doubled}</p>
 
+<link rel="stylesheet" href="./footer.css" id="footer-css" />
+
 <button on:click={click}>click</button>
 
 <footer>footer <Count {count} /></footer>
