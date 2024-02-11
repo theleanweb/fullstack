@@ -18,10 +18,17 @@
   });
 </script>
 
-<p>double: {doubled}</p>
-
 <link rel="stylesheet" href="./footer.css" id="footer-css" />
+
+<!-- <p>double: {doubled}</p>
+
 
 <button on:click={click}>click</button>
 
 <footer>footer <Count {count} /></footer>
+
+<style>
+  footer {
+    background-color: yellow;
+  }
+</style> -->

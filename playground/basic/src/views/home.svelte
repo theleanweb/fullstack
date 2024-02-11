@@ -34,6 +34,7 @@
     <link rel="stylesheet" id="mustache" {href} />
     <script type="module" src="./script.ts"></script>
     <title>40 Document</title>
+    <Footer {count} />
   </head>
   <body>
     <!-- <p class="w-full">Hello 3000</p>
@@ -47,7 +48,7 @@
 
     <!-- <Island count={0} /> -->
 
-    <Footer {count} />
+    <!-- <Footer {count} /> -->
 
     <!-- <custom-button __island aria></custom-button> -->
 
