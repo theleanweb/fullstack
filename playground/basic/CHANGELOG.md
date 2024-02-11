@@ -1,5 +1,13 @@
 # basic
 
+## 1.0.9
+
+### Patch Changes
+
+- Updated dependencies [e08a83b]
+- Updated dependencies [7f34787]
+  - @leanweb/fullstack@0.1.5
+
 ## 1.0.8
 
 ### Patch Changes
