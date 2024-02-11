@@ -1,5 +1,12 @@
 # @leanweb/fullstack
 
+## 0.1.5
+
+### Patch Changes
+
+- e08a83b: Fix serving of CSS assets during dev mode
+- 7f34787: Attach asset file reference to non-ssr components during dev
+
 ## 0.1.4
 
 ### Patch Changes
