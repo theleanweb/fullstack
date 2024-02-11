@@ -317,7 +317,7 @@ export default function fullstack(userConfig?: Options) {
       async handler(code, id) {
         const { ssr, filename } = parseRequest(id);
 
-        if (isView(filename) && ssr) {
+        if (isView(filename)) {
           const result = await compiler.preprocess(
             code,
             [
