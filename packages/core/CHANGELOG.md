@@ -1,5 +1,11 @@
 # @leanweb/fullstack
 
+## 0.1.4
+
+### Patch Changes
+
+- 6d5e505: Handle mustache attributes on assets
+
 ## 0.1.3
 
 ### Patch Changes
