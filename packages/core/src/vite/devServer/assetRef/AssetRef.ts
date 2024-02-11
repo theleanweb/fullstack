@@ -82,7 +82,11 @@ export function preprocessor({
                         for (let val of value) {
                           const content = val.raw;
 
-                          if (val && isLocalPath(content)) {
+                          if (
+                            val &&
+                            val.type == "Text" &&
+                            isLocalPath(content)
+                          ) {
                             const resolved = path.resolve(parsed.dir, content);
                             const source = path.relative(cwd, resolved);
                             const src = `${content}?${PREFIX}=${source}`;
