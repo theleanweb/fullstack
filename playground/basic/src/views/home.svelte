@@ -4,6 +4,8 @@
 
   import math, { pi } from "./math";
 
+  import href from "./main.css";
+
   export let count: number;
   export let counter: string;
 
@@ -29,6 +31,7 @@
     <link rel="stylesheet" href="./style.css" /> -->
     <link rel="stylesheet" href="./main.css" />
     <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" {href} />
     <script type="module" src="./script.ts"></script>
     <title>40 Document</title>
   </head>
