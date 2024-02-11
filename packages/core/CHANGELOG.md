@@ -1,5 +1,15 @@
 # @leanweb/fullstack
 
+## 0.2.0
+
+### Minor Changes
+
+- e77e0fe: Include child components html assets in build mode
+
+### Patch Changes
+
+- e77e0fe: Fix dev preprocessor breaking svelte component style processing
+
 ## 0.1.5
 
 ### Patch Changes
