@@ -342,7 +342,7 @@ export default function fullstack(userConfig?: Options) {
 
         if (!isView(filename)) return;
 
-        if (!req.ssr) return;
+        // if (!req.ssr) return;
 
         const { dir, name } = path.parse(filename);
 
