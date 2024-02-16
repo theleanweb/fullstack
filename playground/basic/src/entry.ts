@@ -17,4 +17,12 @@ app.get("/home/:id?", (ctx) => {
 
 // app.get("/about", (ctx) => ctx.html(Render.renderSSR(About, { count: 5 })));
 
+app.onError((error, ctx) => {
+  return ctx.html(Render.renderSSR(Home, { count }));
+})
+
+app.notFound((ctx) => {
+  return ctx.html(Render.renderSSR(Home, { count }));
+})
+
 export default app;
