@@ -1,7 +1,7 @@
 {
   "name": "create-fullstack",
   "version": "0.0.0",
-  "description": "",
+  "description": "A CLI app to create a new fullstack project",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -9,7 +9,8 @@
   "homepage": "https://github.com/theleanweb/fullstack#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theleanweb/fullstack.git"
+    "url": "https://github.com/theleanweb/fullstack.git",
+    "directory": "packages/create"
   },
   "bin": "./dist/index.js",
   "scripts": {
@@ -30,7 +31,6 @@
     "@changesets/cli": "^2.27.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.6",
-    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {
