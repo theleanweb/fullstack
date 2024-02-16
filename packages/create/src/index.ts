@@ -2,15 +2,23 @@
 
 import fse from "fs-extra";
 import * as fs from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { basename, join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import color from "kleur";
+
+import pkg from "../package.json" assert { type: "json" };
 
 import * as c from "@clack/prompts";
 
-let cwd = process.cwd();
-
 const root = fileURLToPath(new URL("../", import.meta.url));
 const templatesDirectory = join(root, "templates");
+
+console.log(`
+${color.grey(`${pkg.name} version ${pkg.version}`)}
+`);
+
+let cwd = process.cwd();
 
 let directory = await c.text({
   message: "Project directory",
@@ -40,6 +48,30 @@ const projectName = basename(resolve(cwd));
 
 create({ projectName, directory });
 
+c.outro("Your project is ready!");
+
+console.log("\nNext steps:");
+
+let i = 1;
+
+const workspace = relative(process.cwd(), cwd);
+const package_manager = getPackageManager() || "npm";
+
+if (workspace !== "") {
+  console.log(`  ${i++}) ${color.bold(color.cyan(`cd ${workspace}`))}`);
+}
+
+console.log(
+  `  ${i++}) ${color.bold(color.cyan(`${package_manager} install`))}`
+);
+
+// prettier-ignore
+console.log(`  ${i++}) ${color.bold(color.cyan('git init && git add -A && git commit -m "Initial commit"'))} (optional)`);
+
+console.log(
+  `  ${i++}) ${color.bold(color.cyan(`${package_manager} run dev -- --open`))}`
+);
+
 function create({
   directory,
   projectName,
@@ -52,7 +84,7 @@ function create({
 
   const { name: _, ...pkg } = getPackageMetadata(templateDirectory);
 
-  fse.emptyDirSync(destinationDirectory)
+  fse.emptyDirSync(destinationDirectory);
   fse.copySync(templateDirectory, destinationDirectory);
   writePackageMetadata(destinationDirectory, { name: projectName, ...pkg });
 }
@@ -63,4 +95,15 @@ function getPackageMetadata(dir: string) {
 
 function writePackageMetadata(dir: string, pkg: object) {
   return fse.writeFile(join(dir, "package.json"), JSON.stringify(pkg, null, 2));
+}
+
+function getPackageManager() {
+  if (!process.env.npm_config_user_agent) {
+    return undefined;
+  }
+  const user_agent = process.env.npm_config_user_agent;
+  const pm_spec = user_agent.split(" ")[0];
+  const separator_pos = pm_spec.lastIndexOf("/");
+  const name = pm_spec.substring(0, separator_pos);
+  return name === "npminstall" ? "cnpm" : name;
 }
