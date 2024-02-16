@@ -1,4 +1,13 @@
 node_modules
+
+# Secrets
 .env
-public/assets
+
+# Generated Secrets Typescript types
 env.d.ts
+
+# Frontend assets compiled code
+public/assets
+
+# Platform specific
+.DS_Store
