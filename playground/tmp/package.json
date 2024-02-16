@@ -1,0 +1,23 @@
+{
+  "name": "tmp",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@leanweb/fullstack": "workspace:*",
+    "hono": "^3.12.0",
+    "mdsvex": "^0.11.0",
+    "svelte": "^4.2.8"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.0.1",
+    "@tsconfig/svelte": "^5.0.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
+  }
+}
