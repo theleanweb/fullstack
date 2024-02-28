@@ -53,7 +53,6 @@
     "@remix-run/node": "^2.7.2",
     "@remix-run/web-fetch": "^4.4.2",
     "cheerio": "1.0.0-rc.12",
-    "cookie": "^0.6.0",
     "devalue": "^4.3.2",
     "effect": "^2.0.1",
     "es-module-lexer": "^1.4.1",

@@ -26,9 +26,6 @@ importers:
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
-      cookie:
-        specifier: ^0.6.0
-        version: 0.6.0
       devalue:
         specifier: ^4.3.2
         version: 4.3.2
