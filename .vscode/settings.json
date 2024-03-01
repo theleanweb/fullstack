@@ -1,5 +1,7 @@
 {
   "files.associations": {
     "*.svx": "markdown"
-  }
+  },
+  "svelte.plugin.svelte.format.config.svelteStrictMode": true,
+  "svelte.plugin.svelte.defaultScriptLanguage": "ts"
 }

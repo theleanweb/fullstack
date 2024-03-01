@@ -6,7 +6,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "fullstack": "./dist/cli/index.js"
+    "fustack": "./dist/cli/index.js"
   },
   "publishConfig": {
     "access": "public"
@@ -54,7 +54,6 @@
   "dependencies": {
     "@remix-run/web-fetch": "^4.4.2",
     "cheerio": "1.0.0-rc.12",
-    "clipanion": "4.0.0-rc.3",
     "devalue": "^4.3.2",
     "effect": "^2.0.1",
     "es-module-lexer": "^1.4.1",
@@ -66,6 +65,7 @@
     "mlly": "^1.5.0",
     "parse-es-import": "^0.6.0",
     "parse-imports-exports": "^0.0.9",
+    "sade": "^1.8.1",
     "set-cookie-parser": "^2.6.0",
     "sirv": "^2.0.4",
     "ts-dedent": "^2.2.0",
