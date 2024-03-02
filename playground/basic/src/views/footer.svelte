@@ -18,12 +18,11 @@
   });
 </script>
 
-<link rel="stylesheet" href="./footer.css" id="footer-css" />
+<!-- <link rel="stylesheet" href="./footer.css" id="footer-css" /> -->
 
-<!-- <p>double: {doubled}</p>
+<p>double: {doubled}</p>
 
-
-<button on:click={click}>click</button>
+<button on:click="{click}">click</button>
 
 <footer>footer <Count {count} /></footer>
 
@@ -31,4 +30,4 @@
   footer {
     background-color: yellow;
   }
-</style> -->
+</style>

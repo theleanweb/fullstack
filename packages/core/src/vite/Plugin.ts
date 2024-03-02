@@ -33,6 +33,7 @@ import * as Env from "./env/Env.js";
 import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { devServer } from "./devServer/DevServer.js";
 import { previewServer } from "./preview/Server.js";
+import { island } from "./Island.js";
 // import { compressFile } from "./Compress.js";
 
 // interface Manifest {
@@ -401,32 +402,6 @@ export default function fullstack(userConfig?: Options) {
     },
   };
 
-  // const pluginIsland: Plugin = {
-  //   name: "fullstack:island",
-  //   transform: {
-  //     order: "pre",
-  //     async handler(code, id) {
-  //       const { filename, ...req } = parseRequest(id);
-
-  //       if (!isView(filename)) return;
-
-  //       // console.log(id);
-
-  //       // if (!req.ssr) return;
-
-  //       const r = await compiler.preprocess(
-  //         code,
-  //         [vitePreprocess(), island()],
-  //         { filename }
-  //       );
-
-  //       // console.log(r.toString?.());
-
-  //       return { code: r.code, map: r.map as any };
-  //     },
-  //   },
-  // };
-
   /**
    * The initial approach of preprocessing components to attach the real disk location
    * didn't play nice with the main svelte plugin and preprocessors. So we have to include our
@@ -447,6 +422,7 @@ export default function fullstack(userConfig?: Options) {
     preprocess: [
       ...preprocessors,
       AssetRef.preprocessor({ cwd, config: configProxy }),
+      island({ cwd, config: configProxy }),
     ],
     compilerOptions: {
       ...compilerOptions,

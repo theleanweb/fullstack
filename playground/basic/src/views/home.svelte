@@ -34,7 +34,7 @@
     <link rel="stylesheet" id="mustache" {href} />
     <script type="module" src="./script.ts"></script>
     <title>40 Document</title>
-    <Footer {count} />
+    <!-- <Footer {count} /> -->
   </head>
   <body>
     <!-- <p class="w-full">Hello 3000</p>
@@ -46,7 +46,13 @@
 
     <img src="/favicon.png" alt="favicon" />
 
-    <!-- <Island count={0} /> -->
+    <div class="island">
+      <Island>
+        <div class="child">
+          <Footer count="{5}" />
+        </div>
+      </Island>
+    </div>
 
     <!-- <Footer {count} /> -->
 
@@ -55,6 +61,14 @@
     {#each num as n}
       <p>{n}</p>
     {/each}
+
+    <!-- <example-element  slots={0} name=""></example-element> -->
+
+    <!-- <fullstack:island slots={''}  on:cl></fullstack:island> -->
+
+    <!-- <svelte:body></svelte:body> -->
+
+    <!-- <Footer count="{5}" /> -->
 
     <!-- <section use:hydrate>
       <h1>Footer here</h1>

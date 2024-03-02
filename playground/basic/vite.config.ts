@@ -6,4 +6,8 @@ import simpleScope from "vite-plugin-simple-scope";
 export default defineConfig({
   // base: "/static",
   plugins: [fullstack(), simpleScope()],
+  build: {
+    minify: false,
+    // rollupOptions: {}
+  },
 });
