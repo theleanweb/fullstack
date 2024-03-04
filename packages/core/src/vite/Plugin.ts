@@ -88,13 +88,10 @@ export default function fullstack(userConfig?: Options) {
   const buildDir = path.join(root, "build");
   const generatedDir = path.join(root, "generated");
 
-  const configResult = Config.parse(userConfig ?? {}).pipe(
-    Effect.either,
-    Effect.runSync
-  );
+  const configResult = Config.parse(userConfig ?? {});
 
-  if (Either.isLeft(configResult)) {
-    const { fieldErrors } = configResult.left.error.flatten();
+  if (!configResult.success) {
+    const { fieldErrors } = configResult.error.flatten();
 
     const errors: string[] = [];
 
@@ -113,7 +110,7 @@ export default function fullstack(userConfig?: Options) {
     process.exit(1);
   }
 
-  const { compilerOptions, ...config } = configResult.right;
+  const { compilerOptions, ...config } = configResult.data;
 
   const preprocessors = config.preprocess
     ? globalThis.Array.isArray(config.preprocess)
@@ -361,6 +358,27 @@ export default function fullstack(userConfig?: Options) {
           name: "plugin-resolve",
           resolveId: (source) => path.resolve(dir, source),
         };
+
+        const replacements = [];
+
+        // const stripStyle: Plugin = {
+        //   name: "plugin-strip-style",
+        //   transform: {
+        //     order: "pre",
+        //     handler(code) {
+        //       code = code.replace(/<style[\s\S]*?<\/style>/g, (s) => {
+        //         const p = `<!--${Math.random()}${Math.random()}-->`;
+        //         replacements.push([p, s]);
+        //         return p;
+        //       });
+        //     },
+        //   },
+        // };
+
+        // const restoreStyle: Plugin = {
+        //   name: "plugin-restore-style",
+        //   transform(code, id, options) {},
+        // };
 
         // const quietLogger = Vite.createLogger();
         // quietLogger.info = () => undefined;
