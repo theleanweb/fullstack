@@ -29,8 +29,6 @@ function isLocalPath(path: string) {
   );
 }
 
-export const PREFIX = "s";
-
 export function preprocessor({
   cwd,
   config,
@@ -84,20 +82,11 @@ export function preprocessor({
                           const value = attr.value;
 
                           for (let val of value) {
-                            const content = val.raw;
+                            const src = val.raw;
 
-                            if (
-                              val &&
-                              val.type == "Text" &&
-                              isLocalPath(content)
-                            ) {
-                              const resolved = path.resolve(
-                                parsed.dir,
-                                content
-                              );
-                              const source = path.relative(cwd, resolved);
-                              const src = `${content}?${PREFIX}=${source}`;
-                              s.update(val.start, val.end, src);
+                            if (val && val.type == "Text" && isLocalPath(src)) {
+                              const resolved = path.resolve(parsed.dir, src);
+                              s.update(val.start, val.end, resolved);
                             }
                           }
                         }
