@@ -1,5 +1,11 @@
 # @leanweb/fullstack
 
+## 0.3.1
+
+### Patch Changes
+
+- 14312a2: Upgrade effect
+
 ## 0.3.0
 
 ### Minor Changes
