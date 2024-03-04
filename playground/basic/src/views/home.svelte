@@ -1,6 +1,7 @@
 <script lang="ts">
   import Footer from "./footer.svelte";
   import Island from "./Island.svelte";
+  import Inner from "./inner.svelte";
 
   import math, { pi } from "./math";
 
@@ -46,13 +47,11 @@
 
     <img src="/favicon.png" alt="favicon" />
 
-    <div class="island">
-      <Island>
-        <div class="child">
-          <Footer count="{5}" />
-        </div>
-      </Island>
-    </div>
+    <Island __island />
+
+    <hr />
+
+    <Island child="{Inner}" />
 
     <!-- <Footer {count} /> -->
 
@@ -61,6 +60,8 @@
     {#each num as n}
       <p>{n}</p>
     {/each}
+
+    <Island __island />
 
     <!-- <example-element  slots={0} name=""></example-element> -->
 

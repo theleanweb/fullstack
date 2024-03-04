@@ -10,7 +10,7 @@ import color from "kleur";
 import type { ConfigEnv, Plugin, ResolvedConfig, Rollup } from "vite";
 import * as Vite from "vite";
 
-import { PreprocessorGroup } from "svelte/compiler";
+import { PreprocessorGroup, preprocess } from "svelte/compiler";
 
 import { mdsvex } from "mdsvex";
 
@@ -33,7 +33,7 @@ import * as Env from "./env/Env.js";
 import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { devServer } from "./devServer/DevServer.js";
 import { previewServer } from "./preview/Server.js";
-import { island } from "./Island.js";
+import { clean, getHydrationScript, island, ISLAND_SCRIPT } from "./Island.js";
 // import { compressFile } from "./Compress.js";
 
 // interface Manifest {
@@ -304,6 +304,67 @@ export default function fullstack(userConfig?: Options) {
     },
   };
 
+  const pluginIsland: Plugin = {
+    name: "fullstack:island",
+    // buildStart() {
+    //   clean();
+    // },
+    // transformIndexHtml(html, ctx) {
+    //   console.log("\nisland: ", html);
+    // },
+    resolveId: {
+      order: "pre",
+      handler(source) {
+        // if (!source.endsWith(".js")) {
+        //   console.log("\nisland: ", source, source.startsWith(ISLAND_SCRIPT));
+        // }
+
+        if (source.startsWith(ISLAND_SCRIPT)) {
+          const { filename, query, searchParams } = parseId(source);
+          // console.log("\nisland: ", source, filename);
+          // return `\0${source}`;
+
+          return {
+            id: source,
+            meta: { type: "island", id: searchParams.get("id") },
+          };
+        }
+      },
+    },
+    load: {
+      order: "pre",
+      handler(id) {
+        const { filename, query, searchParams } = parseId(id);
+
+        // console.log(
+        //   "\nisland: ",
+        //   id,
+        //   filename,
+        //   filename.startsWith(`${ISLAND_SCRIPT}`)
+        //   // searchParams.get("id"),
+        //   // getIslandScript(id)
+        // );
+
+        const id_ = searchParams.get("id");
+
+        const info = this.getModuleInfo(id);
+
+        if (info?.meta.type == "island") {
+          console.log(
+            "\nisland: ",
+            info.meta,
+            getHydrationScript(info.meta.id)
+          );
+          return getHydrationScript(info.meta.id);
+        }
+
+        // if (filename.startsWith(ISLAND_SCRIPT)) {
+        //   if (id) return getHydrationScript(id);
+        // }
+      },
+    },
+  };
+
   const pluginBuild: Plugin = {
     apply: "build",
     name: "fullstack:build",
@@ -353,9 +414,20 @@ export default function fullstack(userConfig?: Options) {
 
         const id_ = path.join(dir_, name_);
 
+        const n = await preprocess(
+          _,
+          [
+            ...defaultPreprocessors,
+            island({ cwd, config: resolvedViteConfig }),
+          ],
+          { filename }
+        );
+
+        // console.log(n);
+
         fsExtra.ensureDirSync(dir_);
-        fsExtra.copyFileSync(filename, id_);
-        // fsExtra.writeFileSync(id_, code);
+        // fsExtra.copyFileSync(filename, id_);
+        fsExtra.writeFileSync(id_, n.code);
 
         // resolve imports from the original file location
         const resolve: Plugin = {
@@ -375,7 +447,7 @@ export default function fullstack(userConfig?: Options) {
           // customLogger: quietLogger,
           // We apply obfuscation to prevent vite:build-html plugin from freaking out
           // when it sees a svelte script at the beginning of the html file
-          plugins: [...plugins, resolve, obfuscate, deobfuscate],
+          plugins: [...plugins, pluginIsland, resolve, obfuscate, deobfuscate],
           build: {
             outDir: buildDir,
             emptyOutDir: false,
@@ -437,8 +509,8 @@ export default function fullstack(userConfig?: Options) {
     pluginDev,
     pluginEnv,
     pluginBuild,
-    pluginPreview,
     // pluginIsland,
+    pluginPreview,
     svelte(svelteOptions),
   ];
 }

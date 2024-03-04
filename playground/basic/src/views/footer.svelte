@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import Count from "../count.svelte";
 
-  export let count: number;
+  export let count: number = 0;
 
   let doubled: number;
   $: doubled = count * 2;
@@ -26,8 +26,8 @@
 
 <footer>footer <Count {count} /></footer>
 
-<style>
+<!-- <style>
   footer {
     background-color: yellow;
   }
-</style>
+</style> -->

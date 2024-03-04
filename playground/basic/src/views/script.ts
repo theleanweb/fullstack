@@ -6,11 +6,11 @@ import Island from "./Island.svelte";
 
 // const data = JSON.parse(document.getElementById("data")!.textContent!);
 
-const counter = new Island({
-  hydrate: true,
-  props: { count: 0 },
-  target: document.querySelector(".island")!,
-});
+// const counter = new Island({
+//   hydrate: true,
+//   props: { count: 0 },
+//   target: document.querySelector(".island")!,
+// });
 
 // console.log(Island);
 
