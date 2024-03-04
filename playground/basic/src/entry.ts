@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { Render } from "@leanweb/fullstack/runtime";
 
 import Home from "./views/home.svelte?ssr";
-import About from "./views/about.svx?ssr";
+// import About from "./views/about.svx?ssr";
 
 const app = new Hono();
 
