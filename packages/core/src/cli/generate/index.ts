@@ -3,7 +3,7 @@ import * as path from "node:path";
 
 import { dedent } from "ts-dedent";
 
-const VIEWS = "src/views/pages";
+const VIEWS = "src/views";
 const CONTROLLERS = "src/controllers";
 
 export function write(
