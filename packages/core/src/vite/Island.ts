@@ -15,8 +15,6 @@ import { dedent } from "ts-dedent";
 
 import { ParsedStaticImport, findStaticImports } from "mlly";
 
-import { PREFIX } from "./devServer/assetRef/AssetRef.js";
-
 // type Loc = { line: number; column: number };
 
 // interface AttributeValue {
@@ -200,7 +198,7 @@ export function island(): PreprocessorGroup {
                     const resolved = path.resolve(parsed.dir, named.specifier);
                     const source = path.relative(cwd, resolved);
 
-                    search.set(PREFIX, source);
+                    // search.set(PREFIX, source);
                     // search.set("ssr", "");
 
                     importUrl = resolved;
