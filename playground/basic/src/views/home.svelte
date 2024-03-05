@@ -21,3 +21,11 @@
 </script>
 
 <Footer {count} />
+
+<div class="footer"></div>
+
+<style>
+  .footer {
+    background-color: yellow;
+  }
+</style>

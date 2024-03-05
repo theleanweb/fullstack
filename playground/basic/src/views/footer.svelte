@@ -24,10 +24,10 @@
 
 <button on:click="{click}">click</button>
 
-<footer>footer <Count {count} /></footer>
+<footer class="comment">footer <Count {count} /></footer>
 
 <style>
-  footer {
+  .comment {
     background-color: yellow;
   }
 </style>
