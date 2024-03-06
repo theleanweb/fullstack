@@ -40,7 +40,7 @@ export const preprocessor = ({
         const staticImports = findStaticImports(content);
 
         const imports = Object.fromEntries(
-          staticImports.map((_) => [_.imports.trim(), _])
+          staticImports.map((_) => [_.imports?.trim(), _])
         );
 
         const s = new MagicString(args.content, { filename: name });
