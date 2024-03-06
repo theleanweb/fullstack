@@ -61,7 +61,6 @@
     "mdsvex": "^0.11.0",
     "mlly": "^1.5.0",
     "parse-es-import": "^0.6.0",
-    "parse-imports-exports": "^0.0.9",
     "set-cookie-parser": "^2.6.0",
     "sirv": "^2.0.4",
     "ts-dedent": "^2.2.0",
