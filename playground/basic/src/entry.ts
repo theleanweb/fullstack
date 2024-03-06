@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { Render } from "@leanweb/fullstack/runtime";
 import { createCookieSessionStorage } from "@leanweb/fullstack/runtime/Session";
 
+import Async from "./views/async.svelte?ssr";
 import Home from "./views/home.svelte?ssr";
 // import About from "./views/about.svx?ssr";
 
@@ -35,12 +36,20 @@ const { getSession, commitSession, destroySession } =
     },
   });
 
+console.log(Async);
+
 const app = new Hono();
 
 app.get("/", async (ctx) => {
   const session = await getSession(ctx.req.raw.headers.get("Cookie"));
 
   session.flash("error", "Invalid username/password");
+
+  try {
+    console.log(Async.render({}));
+  } catch (error) {
+    console.log(error);
+  }
 
   return ctx.html('Go to <a href="/home">About 4</a>', {
     headers: {
@@ -57,10 +66,14 @@ app.get("/home/:id?", async (ctx) => {
 
   console.log({ error: session.get("error") });
 
-  return ctx.html(Render.renderSSR(Home, { count }), {headers: {
-    "Set-Cookie": await commitSession(session),
-  },});
+  return ctx.html(Render.renderSSR(Home, { count }), {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
 });
+
+// app.get("/async", (ctx) => ctx.html(Render.renderSSR(Async, { count: 5 })));
 
 // app.get("/about", (ctx) => ctx.html(Render.renderSSR(About, { count: 5 })));
 
