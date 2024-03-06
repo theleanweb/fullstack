@@ -1,7 +1,7 @@
 <script lang="ts">
   import Footer from "./footer.svelte";
   import Island from "./Island.svelte";
-  import Inner from "./inner.svelte";
+  // import Inner from "./inner.svelte";
 
   import math, { pi } from "./math";
 
@@ -51,7 +51,7 @@
 
     <hr />
 
-    <Island child="{Inner}" />
+    <!-- <Island child="{Inner}" /> -->
 
     <!-- <Footer {count} /> -->
 

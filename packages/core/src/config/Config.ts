@@ -12,7 +12,8 @@ export function parse(
   config: Options
 ): Effect.Effect<never, ConfigError, ValidatedOptions> {
   const _ = options.safeParse(config);
-  return Effect.unified(
-    _.success ? Effect.succeed(_.data) : Effect.fail(new ConfigError(_.error))
-  );
+  // @ts-expect-error
+  return _.success
+    ? Effect.succeed(_.data)
+    : Effect.fail(new ConfigError(_.error));
 }

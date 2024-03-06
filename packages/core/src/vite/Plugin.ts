@@ -15,8 +15,8 @@ import { PreprocessorGroup, preprocess } from "svelte/compiler";
 import { mdsvex } from "mdsvex";
 
 import {
-  svelte,
   Options as SvelteOptions,
+  svelte,
   vitePreprocess,
 } from "@sveltejs/vite-plugin-svelte";
 
@@ -30,10 +30,10 @@ import * as Config from "../config/Config.js";
 import { Options } from "../config/options.js";
 import * as Env from "./env/Env.js";
 
-import * as AssetRef from "./devServer/assetRef/AssetRef.js";
+import * as Island from "./Island.js";
 import { devServer } from "./devServer/DevServer.js";
+import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { previewServer } from "./preview/Server.js";
-import { clean, getHydrationScript, island, ISLAND_SCRIPT } from "./Island.js";
 // import { compressFile } from "./Compress.js";
 
 // interface Manifest {
@@ -91,10 +91,13 @@ export default function fullstack(userConfig?: Options) {
 
   const configResult = Config.parse(userConfig ?? {}).pipe(
     Effect.either,
+    // @ts-expect-error
     Effect.runSync
   );
 
+  // @ts-expect-error
   if (Either.isLeft(configResult)) {
+    // @ts-expect-error
     const { fieldErrors } = configResult.left.error.flatten();
 
     const errors: string[] = [];
@@ -114,6 +117,7 @@ export default function fullstack(userConfig?: Options) {
     process.exit(1);
   }
 
+  // @ts-expect-error
   const { compilerOptions, ...config } = configResult.right;
 
   const preprocessors = config.preprocess
@@ -306,61 +310,51 @@ export default function fullstack(userConfig?: Options) {
 
   const pluginIsland: Plugin = {
     name: "fullstack:island",
-    // buildStart() {
-    //   clean();
-    // },
-    // transformIndexHtml(html, ctx) {
-    //   console.log("\nisland: ", html);
-    // },
+    buildStart() {
+      Island.cleanHydrationStore();
+    },
     resolveId: {
       order: "pre",
       handler(source) {
-        // if (!source.endsWith(".js")) {
-        //   console.log("\nisland: ", source, source.startsWith(ISLAND_SCRIPT));
-        // }
-
-        if (source.startsWith(ISLAND_SCRIPT)) {
-          const { filename, query, searchParams } = parseId(source);
-          // console.log("\nisland: ", source, filename);
-          // return `\0${source}`;
-
-          return {
-            id: source,
-            meta: { type: "island", id: searchParams.get("id") },
-          };
+        if (source.includes(Island.ISLAND_SCRIPT)) {
+          const { searchParams } = parseId(source);
+          const id = searchParams.get("id");
+          return { id: source, meta: { type: "island", id } };
         }
       },
     },
     load: {
       order: "pre",
       handler(id) {
-        const { filename, query, searchParams } = parseId(id);
-
-        // console.log(
-        //   "\nisland: ",
-        //   id,
-        //   filename,
-        //   filename.startsWith(`${ISLAND_SCRIPT}`)
-        //   // searchParams.get("id"),
-        //   // getIslandScript(id)
-        // );
-
-        const id_ = searchParams.get("id");
-
         const info = this.getModuleInfo(id);
 
         if (info?.meta.type == "island") {
-          console.log(
-            "\nisland: ",
-            info.meta,
-            getHydrationScript(info.meta.id)
-          );
-          return getHydrationScript(info.meta.id);
-        }
+          const script = Island.getHydrationScript(info.meta.id);
 
-        // if (filename.startsWith(ISLAND_SCRIPT)) {
-        //   if (id) return getHydrationScript(id);
-        // }
+          if (script) {
+            return { code: script, moduleSideEffects: "no-treeshake" };
+          }
+        }
+      },
+    },
+    transform: {
+      order: "pre",
+      async handler(code, id) {
+        /**
+         * attach islands hydration script during production
+         */
+        const { filename } = parseRequest(id);
+
+        if (resolvedViteConfig.command == "serve" || !isView(filename)) return;
+
+        const preprocessors = [
+          ...defaultPreprocessors,
+          Island.preprocessor({ cwd, config: resolvedViteConfig }),
+        ];
+
+        const result = await preprocess(code, preprocessors, { filename });
+
+        return { code: result.code, map: result.map?.toString() };
       },
     },
   };
@@ -400,7 +394,7 @@ export default function fullstack(userConfig?: Options) {
     transform: {
       order: "pre",
       async handler(_, id) {
-        const { filename, ...req } = parseRequest(id);
+        const { filename } = parseRequest(id);
 
         if (!isView(filename)) return;
 
@@ -414,20 +408,9 @@ export default function fullstack(userConfig?: Options) {
 
         const id_ = path.join(dir_, name_);
 
-        const n = await preprocess(
-          _,
-          [
-            ...defaultPreprocessors,
-            island({ cwd, config: resolvedViteConfig }),
-          ],
-          { filename }
-        );
-
-        // console.log(n);
-
         fsExtra.ensureDirSync(dir_);
         // fsExtra.copyFileSync(filename, id_);
-        fsExtra.writeFileSync(id_, n.code);
+        fsExtra.writeFileSync(id_, _);
 
         // resolve imports from the original file location
         const resolve: Plugin = {
@@ -447,7 +430,7 @@ export default function fullstack(userConfig?: Options) {
           // customLogger: quietLogger,
           // We apply obfuscation to prevent vite:build-html plugin from freaking out
           // when it sees a svelte script at the beginning of the html file
-          plugins: [...plugins, pluginIsland, resolve, obfuscate, deobfuscate],
+          plugins: [...plugins, resolve, obfuscate, deobfuscate],
           build: {
             outDir: buildDir,
             emptyOutDir: false,
@@ -491,10 +474,20 @@ export default function fullstack(userConfig?: Options) {
 
   const svelteOptions: SvelteOptions = {
     extensions: config.extensions,
+    onwarn(warning, defaultHandler) {
+      if (
+        warning.code == "unused-export-let" &&
+        warning.message.includes(Island.MARKER)
+      ) {
+        return;
+      }
+
+      defaultHandler?.(warning);
+    },
     preprocess: [
       ...preprocessors,
       AssetRef.preprocessor({ cwd, config: configProxy }),
-      island({ cwd, config: configProxy }),
+      Island.preprocessor({ cwd, config: configProxy }),
     ],
     compilerOptions: {
       ...compilerOptions,
@@ -508,8 +501,9 @@ export default function fullstack(userConfig?: Options) {
     serverEnv,
     pluginDev,
     pluginEnv,
+    // We need island preprocessing to run before our inner build during production build
+    pluginIsland,
     pluginBuild,
-    // pluginIsland,
     pluginPreview,
     svelte(svelteOptions),
   ];

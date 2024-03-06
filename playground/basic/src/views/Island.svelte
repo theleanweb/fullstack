@@ -6,9 +6,9 @@
   //   count: number;
   // }
 
-  // export const __island: boolean = true;
+  export let __island: boolean = true;
   export let count = 0;
-  export let child: any;
+  // export let child: any;
 
   onMount(() => {
     setInterval(() => {
@@ -24,10 +24,10 @@
 
 <hr style="background: red" />
 
-<h1>Child</h1>
+<!-- <h1>Child</h1>
 
 <hr />
 
 <svelte:component this="{child}" />
 
-<hr />
+<hr /> -->

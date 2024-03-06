@@ -9,7 +9,7 @@ import { dedent } from "ts-dedent";
 import { PreprocessorGroup, parse, walk } from "svelte/compiler";
 import { Attribute, BaseNode } from "svelte/types/compiler/interfaces";
 
-const MARKER = "__island";
+export const MARKER = "__island";
 
 export const ISLAND_SCRIPT = "@fullstack/island";
 
@@ -17,9 +17,9 @@ const hydrationStore = new Map<string, string>();
 
 export const getHydrationScript = (id: string) => hydrationStore.get(id);
 
-export const clean = () => hydrationStore.clear();
+export const cleanHydrationStore = () => hydrationStore.clear();
 
-export const island = ({
+export const preprocessor = ({
   cwd,
   config,
 }: {
@@ -169,11 +169,18 @@ export const island = ({
             const component = island.getAttribute('component')
             const props = JSON.parse(island.getAttribute('props'));
             new nodes[component]({props,target: island,hydrate: true});
-          }
-          
-          // hydrator.remove();`;
+          }`;
 
-          hydrationStore.set(id, hydrationScript);
+          let script = `<script type="module">${hydrationScript}</script>`;
+
+          /**
+           * We do this in coordination with the vite island plugin to by-pass tree shaking,
+           * because there's no way for vite to know that we're using the above imported modules
+           */
+          if (config.command == "build") {
+            script = `<script type="module" src="@fullstack/island?id=${id}"></script>`;
+            hydrationStore.set(id, hydrationScript);
+          }
 
           s.overwrite(
             start,
@@ -182,7 +189,7 @@ export const island = ({
             ${s.slice(start, end)}
 
             <island-hydrator id="${id}" style="display: none;">
-              <script type="module" src="@fullstack/island?id=${id}"></script>
+              ${script}
             </island-hydrator>
           `
           );
