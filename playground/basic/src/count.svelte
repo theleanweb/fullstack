@@ -3,3 +3,9 @@
 </script>
 
 <span>count {count}</span>
+
+<style>
+  span {
+    background-color: red;
+  }
+</style>

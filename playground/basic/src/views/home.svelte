@@ -21,11 +21,7 @@
   const href = "./style.css";
 </script>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<Footer {count} />
 
     <link rel="icon" href="/favicon.png" />
     <!-- <link rel="stylesheet" href="./main.css" />
@@ -40,8 +36,7 @@
   <body>
     <!-- <p class="w-full">Hello 3000</p>
 
-    <ion-button>Default</ion-button>
-    <ion-button disabled="true">Disabled</ion-button> -->
+<div class="footer"></div>
 
     <div>ages: {JSON.stringify({ age: list })}</div>
 

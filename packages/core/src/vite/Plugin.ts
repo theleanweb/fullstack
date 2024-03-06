@@ -89,16 +89,11 @@ export default function fullstack(userConfig?: Options) {
   const buildDir = path.join(root, "build");
   const generatedDir = path.join(root, "generated");
 
-  const configResult = Config.parse(userConfig ?? {}).pipe(
-    Effect.either,
-    // @ts-expect-error
-    Effect.runSync
-  );
 
-  // @ts-expect-error
-  if (Either.isLeft(configResult)) {
-    // @ts-expect-error
-    const { fieldErrors } = configResult.left.error.flatten();
+  const configResult = Config.parse(userConfig ?? {});
+
+  if (!configResult.success) {
+    const { fieldErrors } = configResult.error.flatten();
 
     const errors: string[] = [];
 
@@ -117,8 +112,7 @@ export default function fullstack(userConfig?: Options) {
     process.exit(1);
   }
 
-  // @ts-expect-error
-  const { compilerOptions, ...config } = configResult.right;
+  const { compilerOptions, ...config } = configResult.data;
 
   const preprocessors = config.preprocess
     ? globalThis.Array.isArray(config.preprocess)
@@ -398,8 +392,6 @@ export default function fullstack(userConfig?: Options) {
 
         if (!isView(filename)) return;
 
-        // if (!req.ssr) return;
-
         const { dir, name } = path.parse(filename);
 
         const name_ = name + ".html";
@@ -418,6 +410,58 @@ export default function fullstack(userConfig?: Options) {
           resolveId: (source) => path.resolve(dir, source),
         };
 
+        /**
+         * We need to strip inline styles, most especially the svelte component inline style tag.
+         * Because the below vite HTML processing will try to processor all inline style tags, including
+         * the svelte component style tag which produces the wrong output i.e
+         *
+         * <style>export default ""</style>
+         *
+         * which is the wrong behavior, so we remove all inline styles and put them back after vite processing.
+         */
+        const replacements: Array<[string, string]> = [];
+
+        const stripStyle: Plugin = {
+          name: "plugin-strip-style",
+          transformIndexHtml: {
+            order: "pre",
+            handler(code) {
+              /**
+               * matches only uncommented style tags
+               *
+               * To avoid adding commenting already commented tags, which is invalid HTML, which will
+               * cause the vite html analyzer to halt with an error
+               */
+              const regex =
+                /<style\b[^>]*>(?:(?!<!--)[\s\S])*?<\/style>(?![\s\S]*?-->)/gi;
+
+              code = code.replace(regex, (s) => {
+                const p = `<!--${Math.random()}${Math.random()}-->`;
+                replacements.push([p, s]);
+                return p;
+              });
+
+              return code;
+            },
+          },
+        };
+
+        const restoreStyle: Plugin = {
+          name: "plugin-restore-style",
+          transformIndexHtml: {
+            order: "post",
+            handler(code) {
+              if (replacements.length) {
+                replacements.forEach(([p, s]) => {
+                  code = code.replace(p, s);
+                });
+              }
+
+              return code;
+            },
+          },
+        };
+
         // const quietLogger = Vite.createLogger();
         // quietLogger.info = () => undefined;
 
@@ -430,7 +474,14 @@ export default function fullstack(userConfig?: Options) {
           // customLogger: quietLogger,
           // We apply obfuscation to prevent vite:build-html plugin from freaking out
           // when it sees a svelte script at the beginning of the html file
-          plugins: [...plugins, resolve, obfuscate, deobfuscate],
+          plugins: [
+            ...plugins,
+            resolve,
+            stripStyle,
+            restoreStyle,
+            obfuscate,
+            deobfuscate,
+          ],
           build: {
             outDir: buildDir,
             emptyOutDir: false,

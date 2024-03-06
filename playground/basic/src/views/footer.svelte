@@ -24,10 +24,39 @@
 
 <button on:click="{click}">click</button>
 
-<footer>footer <Count {count} /></footer>
+    <!-- <div>ages: {JSON.stringify({ age: list })}</div> -->
+
+    <img src="/favicon.png" alt="favicon" />
+
+    <!-- <Island count={0} /> -->
+
+    <!-- <Footer {count} /> -->
+
+    <!-- <custom-button __island aria></custom-button> -->
+
+    <!-- {#each num as n}
+      <p>{n}</p>
+    {/each} -->
+
+    <!-- <section use:hydrate>
+      <h1>Footer here</h1>
+      <Footer count={5} />
+    </section>
+
+    <div class="counter">
+      {@html counter}
+    </div>
+
+    {@html `<script id="data" type="application/json">${data}</script>`} -->
+
+    <p>
+      <script type="module" src="./script.ts"></script>
+    </p>
+  </body>
+</html>
 
 <!-- <style>
   footer {
     background-color: yellow;
   }
-</style> -->
+</style>
