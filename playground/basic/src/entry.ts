@@ -66,7 +66,7 @@ app.get("/home/:id?", async (ctx) => {
 
   console.log({ error: session.get("error") });
 
-  return ctx.html(Render.renderSSR(Home, { count }), {
+  return ctx.html(Render.unsafeRenderToString(Home, { count }), {
     headers: {
       "Set-Cookie": await commitSession(session),
     },
