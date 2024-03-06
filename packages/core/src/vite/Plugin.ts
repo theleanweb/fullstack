@@ -10,7 +10,7 @@ import color from "kleur";
 import type { ConfigEnv, Plugin, ResolvedConfig, Rollup } from "vite";
 import * as Vite from "vite";
 
-import { PreprocessorGroup, preprocess } from "svelte/compiler";
+import { PreprocessorGroup, Processed, preprocess } from "svelte/compiler";
 
 import { mdsvex } from "mdsvex";
 
@@ -81,6 +81,8 @@ const markdownPreprocessor = mdsvex() as PreprocessorGroup;
 const defaultPreprocessors = [markdownPreprocessor, vitePreprocess()];
 
 const secondaryBuildCache = new Map<string, string>();
+
+const islandCache = new Map<string, Processed>();
 
 export default function fullstack(userConfig?: Options) {
   const root = ".cache";
@@ -307,6 +309,7 @@ export default function fullstack(userConfig?: Options) {
     name: "fullstack:island",
     buildStart() {
       Island.cleanHydrationStore();
+      islandCache.clear();
     },
     resolveId: {
       order: "pre",
@@ -342,12 +345,20 @@ export default function fullstack(userConfig?: Options) {
 
         if (resolvedViteConfig.command == "serve" || !isView(filename)) return;
 
+        const cached = islandCache.get(id);
+
+        if (cached) {
+          return { code: cached.code, map: cached.map?.toString() };
+        }
+
         const preprocessors = [
           ...defaultPreprocessors,
           Island.preprocessor({ cwd, config: resolvedViteConfig }),
         ];
 
         const result = await preprocess(code, preprocessors, { filename });
+
+        islandCache.set(id, result);
 
         return { code: result.code, map: result.map?.toString() };
       },
