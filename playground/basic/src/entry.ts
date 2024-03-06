@@ -4,7 +4,7 @@ import { Render } from "@leanweb/fullstack/runtime";
 import { createCookieSessionStorage } from "@leanweb/fullstack/runtime/Session";
 
 import Home from "./views/home.svelte?ssr";
-import About from "./views/about.svx?ssr";
+// import About from "./views/about.svx?ssr";
 
 type SessionData = {
   userId: string;

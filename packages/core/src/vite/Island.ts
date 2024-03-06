@@ -1,261 +1,202 @@
-// import { inspect } from "util";
-// import url from "node:url";
 import path from "node:path";
 
-// import { pipe } from "effect/Function";
-// import * as Array from "effect/ReadonlyArray";
+import { ResolvedConfig } from "vite";
 
-// import { Plugin } from "vite";
-
-import * as lexer from "es-module-lexer";
 import MagicString from "magic-string";
-import { ImportsExports, parseImportsExports } from "parse-imports-exports";
-import { PreprocessorGroup, parse, preprocess, walk } from "svelte/compiler";
+import { findStaticImports } from "mlly";
 import { dedent } from "ts-dedent";
 
-import { ParsedStaticImport, findStaticImports } from "mlly";
+import { PreprocessorGroup, parse, walk } from "svelte/compiler";
+import { Attribute, BaseNode } from "svelte/types/compiler/interfaces";
 
-import { PREFIX } from "./devServer/assetRef/AssetRef.js";
+export const MARKER = "__island";
 
-// type Loc = { line: number; column: number };
+export const ISLAND_SCRIPT = "@fullstack/island";
 
-// interface AttributeValue {
-//   start: 1157;
-//   end: 1164;
-//   type: "MustacheTag";
-//   expression: {
-//     end: number;
-//     name: string;
-//     start: number;
-//     type: "Identifier";
-//     loc: { end: Loc; start: Loc };
-//   };
-// }
+const hydrationStore = new Map<string, string>();
 
-// interface RawValue {
-//   start: 1201;
-//   end: 1204;
-//   type: "Text";
-//   raw: string;
-//   data: string;
-// }
+export const getHydrationScript = (id: string) => hydrationStore.get(id);
 
-type AttributeValue = boolean | "";
+export const cleanHydrationStore = () => hydrationStore.clear();
 
-interface Attribute {
-  end: number;
-  name: string;
-  start: number;
-  type: "Attribute";
-  value: AttributeValue;
-}
-
-interface Node {
-  start: number;
-  end: number;
-  name: string;
-}
-
-const MARKER = "__island";
-
-const cwd = process.cwd();
-
-export function island(): PreprocessorGroup {
+export const preprocessor = ({
+  cwd,
+  config,
+}: {
+  cwd: string;
+  config: ResolvedConfig;
+}): PreprocessorGroup => {
   return {
-    name: "preprocessor:island",
-    markup: async (args) => {
-      // console.log("here");
+    name: "islands",
+    async markup(args) {
+      const r = /<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g;
 
-      if (true) {
-        const s = new MagicString(args.content, {
-          filename: args.filename ?? "",
-        });
+      const name = args.filename ?? "";
+      const script = r.exec(args.content);
+
+      if (script) {
+        const content = script[1];
+
+        const staticImports = findStaticImports(content);
+
+        const imports = Object.fromEntries(
+          staticImports.map((_) => [_.imports.trim(), _])
+        );
+
+        const s = new MagicString(args.content, { filename: name });
 
         const ast = parse(args.content);
 
-        let namedImports: ImportsExports["namedImports"] = {};
+        const islands: Array<{ id: string; node: BaseNode }> = [];
 
-        const importMap: Record<string, ParsedStaticImport> = {};
+        // @ts-expect-error
+        walk(ast.html, {
+          enter(baseNode) {
+            // @ts-expect-error
+            if (baseNode.type == "InlineComponent") {
+              const node: BaseNode = baseNode;
+              const { attributes } = baseNode;
+              const attrs: Attribute[] = attributes;
 
-        // console.log("\nimports: ", args);
+              const isIsland = attrs.find((_) => _.name == MARKER);
 
-        await preprocess(
-          args.content,
-          {
-            name: "extract-imports",
-            async script({ content }) {
-              await lexer.init;
-              // const [imports, exports] = lexer.parse(content);
+              if (isIsland) {
+                const attributes = attrs.filter((_) => _.name !== MARKER);
 
-              const r = parseImportsExports(content);
+                const props = attributes.map((attr) => {
+                  // @ts-expect-error
+                  if (attr.type == "Binding" || Array.isArray(attr.value)) {
+                    // @ts-expect-error
+                    let val = attr.type == "Binding" ? attr : attr.value?.[0];
 
-              const [match0] = findStaticImports(content);
+                    const { name, value, raw } = val.expression;
 
-              // console.log("analyze: ", args.filename, match0);
-
-              if (match0) {
-                importMap[match0.imports.trim()] = match0;
-              }
-
-              // console.log(r.namedImports);
-
-              namedImports = r.namedImports;
-
-              // imports.map((_) => {
-              //   // console.log("here: ", content.slice(_.s, _.e));
-              //   imports_.push(content.slice(_.s, _.e));
-              // });
-            },
-          },
-          { filename: args.filename }
-        );
-
-        // console.log("import map: ", importMap);
-
-        let arrangedNamedImports: Record<string, string> = {};
-
-        for (let url in namedImports) {
-          const [named] = namedImports[url];
-          if (named.default) arrangedNamedImports[named.default] = url;
-        }
-
-        // const arrangedNamedImports = pipe(
-        //   Object.entries(namedImports),
-        //   Array.map(([url, _]) => {
-        //     return [_[0].default, url] as const;
-        //   }),
-        //   // Record.fromEntries
-        // );
-
-        // console.log("\nimports: ", arrangedNamedImports);
-
-        if (ast.html) {
-          let code = args.content;
-
-          // @ts-expect-error
-          walk(ast.html, {
-            enter(node) {
-              // console.log(node);
-              // @ts-expect-error
-              if (node.type == "InlineComponent") {
-                const node_: Node = node;
-                const { attributes } = node;
-                const attrs: Attribute[] = attributes;
-
-                const isIsland = attrs.find((_) => _.name == MARKER);
-
-                // console.log("isIsland: ", isIsland);
-
-                if (isIsland) {
-                  const props = attrs.filter((_) => _.name !== MARKER);
-
-                  const data_ = props.map((prop) => {
-                    if (globalThis.Array.isArray(prop.value)) {
-                      const [val] = prop.value;
-
-                      if (
-                        val.type == "MustacheTag" ||
-                        val.type == "AttributeShorthand"
-                      ) {
-                        if (val.expression.type == "Literal") {
-                          return `"${prop.name}": ${JSON.stringify(
-                            val.expression.value
-                          )}`;
-                        }
-
-                        if (val.expression.type == "Identifier") {
-                          return `"${prop.name}": ${val.expression.name}`;
-                        }
-
-                        const { name, value, raw } = val.expression;
-                        return `"${prop.name}": ${value ?? name ?? raw}`;
+                    if (
+                      val.type == "Binding" ||
+                      val.type == "MustacheTag" ||
+                      val.type == "AttributeShorthand"
+                    ) {
+                      if (val.expression.type == "Literal") {
+                        return `"${attr.name}": ${JSON.stringify(value)}`;
                       }
 
-                      if (val.type == "Text") {
-                        return `"${prop.name}": ${JSON.stringify(val.raw)}`;
+                      if (val.expression.type == "Identifier") {
+                        return `"${attr.name}": ${name}`;
                       }
+
+                      if (val.expression.type == "ArrayExpression") {
+                        const { end, start } = val.expression;
+                        return `"${attr.name}": ${s.slice(start, end)}`;
+                      }
+
+                      return `"${attr.name}": ${value ?? name ?? raw}`;
                     }
-                  });
 
-                  let data = `{
-                    ${data_.join(",\n")}
-                  }`;
-
-                  const named = importMap[node_.name];
-                  const original = s.slice(node_.start, node_.end);
-
-                  // console.log("here: ", node_.name, named, namedImports);
-
-                  const id = `${node_.name}_DATA_${node_.start}:${node_.end}`;
-
-                  let importUrl = named?.imports;
-
-                  if (args.filename && named) {
-                    const [_, query] = named.specifier.split(`?`, 2);
-
-                    const search = new URLSearchParams(query);
-
-                    const parsed = path.parse(args.filename);
-
-                    const resolved = path.resolve(parsed.dir, named.specifier);
-                    const source = path.relative(cwd, resolved);
-
-                    search.set(PREFIX, source);
-                    // search.set("ssr", "");
-
-                    importUrl = resolved;
+                    if (val.type == "Text") {
+                      return `"${attr.name}": ${JSON.stringify(raw)}`;
+                    }
                   }
+                });
 
-                  console.log("importUrl: ", importUrl, named);
+                let serialized = dedent`{
+                  ${props.join(",\n")}
+                }`;
 
-                  if (importUrl) {
-                    s.overwrite(
-                      node_.start,
-                      node_.end,
-                      dedent`
-                      <div id='${id}_root'>
-                      ${original}
-                      <script id='${id}' type='module' data={JSON.stringify(${data})}>
-                      import ${node_.name} from ${JSON.stringify(importUrl)};
-                      
-                      const data = JSON.parse(document.getElementById("${id}").getAttribute('data'));
-                      console.log('DATA:', data)
-                      console.log(${node_.name})
-                      
-                      const counter = new ${node_.name}({
-                          props: data,
-                          hydrate: true,
-                          target: document.getElementById("${id}_root"),
-                      });
-                      </script>
-                      </div>
-                      
-                      
-                      `
-                    );
+                const template = s.slice(node.start, node.end);
+                const id = `${node.name}_${node.start}:${node.end}`;
 
-                    code = s.toString();
-                  }
-                }
+                const islandTemplate = /*html*/ `
+                <fullstack-island
+                id="${id}"
+                component="${node.name}"
+                style="display: contents;"
+                props={JSON.stringify(${serialized})}
+                >
+                ${template}
+                </fullstack-island>`;
 
-                // console.log(inspect(node, false, Infinity));
+                s.overwrite(node.start, node.end, islandTemplate);
+
+                islands.push({ id, node });
               }
-            },
-          });
+            }
+          },
+        });
 
-          return {
-            code,
-          };
+        const nodes: string[] = [];
+        let trackImports = new Set<string>();
+        const componentImports: string[] = [];
+
+        for (let i = 0; i < islands.length; i++) {
+          const { node } = islands[i];
+
+          if (trackImports.has(node.name)) continue;
+
+          const staticImport = imports[node.name];
+
+          if (staticImport) {
+            let specifier = staticImport.specifier;
+
+            if (config.command == "serve") {
+              const parsed = path.parse(name);
+              const resolved = path.resolve(parsed.dir, specifier);
+              specifier = resolved;
+            }
+
+            componentImports.push(`import ${node.name} from "${specifier}";`);
+            nodes.push(`"${node.name}": ${node.name}`);
+
+            trackImports.add(node.name);
+          }
         }
-      }
 
-      // console.log("\nthis runs first: ", args);
+        const last = islands[islands.length - 1];
+
+        if (last) {
+          const { end, start } = last.node;
+          const id = `hydrator_${start}:${end}`;
+
+          const hydrationScript = `
+          ${componentImports.join("\n")}
+          
+          const nodes = {${nodes.join(",")}};
+          const islands = [${islands.map((_) => `"${_.id}"`)}];
+          const hydrator = document.getElementById("${id}");
+                
+          for (let i = 0; i < islands.length; i++) {
+            const id = islands[i];
+            const island = document.getElementById(id);
+            const component = island.getAttribute('component')
+            const props = JSON.parse(island.getAttribute('props'));
+            new nodes[component]({props,target: island,hydrate: true});
+          }`;
+
+          let script = `<script type="module">${hydrationScript}</script>`;
+
+          /**
+           * We do this in coordination with the vite island plugin to by-pass tree shaking,
+           * because there's no way for vite to know that we're using the above imported modules
+           */
+          if (config.command == "build") {
+            script = `<script type="module" src="@fullstack/island?id=${id}"></script>`;
+            hydrationStore.set(id, hydrationScript);
+          }
+
+          s.overwrite(
+            start,
+            end,
+            dedent/*html*/ `
+            ${s.slice(start, end)}
+
+            <island-hydrator id="${id}" style="display: none;">
+              ${script}
+            </island-hydrator>
+          `
+          );
+        }
+
+        return { code: s.toString(), map: s.generateMap() };
+      }
     },
   };
-}
-
-export function pluginIsland() {
-  // const plugin: Plugin = {
-  //   name: "fullstack:island",
-  // };
-}
+};

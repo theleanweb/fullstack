@@ -1,5 +1,17 @@
 # @leanweb/fullstack
 
+## 0.3.1
+
+### Patch Changes
+
+- 14312a2: Upgrade effect
+
+## 0.3.0
+
+### Minor Changes
+
+- 9e0ecbe: Removes asset file system path reference for resolving file during development
+
 ## 0.2.0
 
 ### Minor Changes

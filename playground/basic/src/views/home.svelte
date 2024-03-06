@@ -1,6 +1,7 @@
 <script lang="ts">
   import Footer from "./footer.svelte";
   import Island from "./Island.svelte";
+  // import Inner from "./inner.svelte";
 
   import math, { pi } from "./math";
 
@@ -20,11 +21,7 @@
   const href = "./style.css";
 </script>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<Footer {count} />
 
     <link rel="icon" href="/favicon.png" />
     <!-- <link rel="stylesheet" href="./main.css" />
@@ -34,19 +31,22 @@
     <link rel="stylesheet" id="mustache" {href} />
     <script type="module" src="./script.ts"></script>
     <title>40 Document</title>
-    <Footer {count} />
+    <!-- <Footer {count} /> -->
   </head>
   <body>
     <!-- <p class="w-full">Hello 3000</p>
 
-    <ion-button>Default</ion-button>
-    <ion-button disabled="true">Disabled</ion-button> -->
+<div class="footer"></div>
 
     <div>ages: {JSON.stringify({ age: list })}</div>
 
     <img src="/favicon.png" alt="favicon" />
 
-    <!-- <Island count={0} /> -->
+    <Island __island />
+
+    <hr />
+
+    <!-- <Island child="{Inner}" /> -->
 
     <!-- <Footer {count} /> -->
 
@@ -55,6 +55,16 @@
     {#each num as n}
       <p>{n}</p>
     {/each}
+
+    <Island __island />
+
+    <!-- <example-element  slots={0} name=""></example-element> -->
+
+    <!-- <fullstack:island slots={''}  on:cl></fullstack:island> -->
+
+    <!-- <svelte:body></svelte:body> -->
+
+    <!-- <Footer count="{5}" /> -->
 
     <!-- <section use:hydrate>
       <h1>Footer here</h1>

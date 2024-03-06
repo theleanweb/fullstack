@@ -1,5 +1,4 @@
-import * as Effect from "effect/Effect";
-import z from "zod";
+import z, { SafeParseReturnType } from "zod";
 
 import { options, Options, ValidatedOptions } from "./options.js";
 
@@ -10,9 +9,6 @@ export class ConfigError {
 
 export function parse(
   config: Options
-): Effect.Effect<never, ConfigError, ValidatedOptions> {
-  const _ = options.safeParse(config);
-  return Effect.unified(
-    _.success ? Effect.succeed(_.data) : Effect.fail(new ConfigError(_.error))
-  );
+): SafeParseReturnType<Options, ValidatedOptions> {
+  return options.safeParse(config);
 }

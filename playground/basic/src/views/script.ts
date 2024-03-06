@@ -1,3 +1,5 @@
+import "virtual:uno.css";
+
 import Footer from "./footer.svelte";
 
 import Island from "./Island.svelte";
@@ -6,12 +8,12 @@ import Island from "./Island.svelte";
 
 // const data = JSON.parse(document.getElementById("data")!.textContent!);
 
-// const counter = new Footer({
+// const counter = new Island({
 //   hydrate: true,
-//   props: { count: data },
-//   target: document.querySelector(".counter")!,
+//   props: { count: 0 },
+//   target: document.querySelector(".island")!,
 // });
 
-console.log(Island);
+// console.log(Island);
 
 // console.log(SERVER);
