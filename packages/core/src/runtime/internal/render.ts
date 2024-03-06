@@ -1,4 +1,5 @@
 import { load } from "cheerio";
+import * as Either from "effect/Either";
 
 import {
   SSRComponent,
@@ -14,7 +15,7 @@ export function render(_: SSRComponentOutput) {
   return document.html();
 }
 
-export function renderSSR(
+export function unsafeRenderToString(
   _: SSRComponent | SSRComponentOutput,
   props?: SSRComponentProps
 ): string {
@@ -31,4 +32,16 @@ export function renderSSR(
   }
 
   return render(output);
+}
+
+export class RenderError {
+  readonly _tag = "RenderError";
+  constructor(public cause: unknown) {}
+}
+
+export function renderToString(_: SSRComponent, props?: SSRComponentProps) {
+  return Either.try({
+    try: () => unsafeRenderToString(_, props),
+    catch: (e) => new RenderError(e),
+  });
 }
