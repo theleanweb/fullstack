@@ -1,3 +1,5 @@
+import "virtual:uno.css";
+
 import Footer from "./footer.svelte";
 
 import Island from "./Island.svelte";

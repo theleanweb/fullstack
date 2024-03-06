@@ -22,6 +22,8 @@
 
 <Footer {count} />
 
+<div class="p-4 bg-red-400">Tailwind CSS</div>
+
 <div class="footer"></div>
 
 <style>

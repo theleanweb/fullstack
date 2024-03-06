@@ -18,13 +18,60 @@
   });
 </script>
 
-<!-- <link rel="stylesheet" href="./footer.css" id="footer-css" /> -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<p>double: {doubled}</p>
+    <link rel="icon" href="/favicon.png" />
+    <!-- <link rel="stylesheet" href="./main.css" />
+    <link rel="stylesheet" href="./style.css" /> -->
+    <link rel="stylesheet" href="./main.css" />
+    <link rel="stylesheet" href="./style.css" />
+    <!-- <link rel="stylesheet" id="mustache" {href} /> -->
+    <script type="module" src="./script.ts"></script>
+    <title>40 Document</title>
+    <!-- <Footer {count} /> -->
+  </head>
+  <body>
+    <p class="p-4 bg-red-500">Hello 3000</p>
 
-<button on:click="{click}">click</button>
+    <!-- <p class="w-full">Hello 3000</p>
 
-<footer class="comment">footer <Count {count} /></footer>
+    <ion-button>Default</ion-button>
+    <ion-button disabled="true">Disabled</ion-button> -->
+
+    <!-- <div>ages: {JSON.stringify({ age: list })}</div> -->
+
+    <img src="/favicon.png" alt="favicon" />
+
+    <!-- <Island count={0} /> -->
+
+    <!-- <Footer {count} /> -->
+
+    <!-- <custom-button __island aria></custom-button> -->
+
+    <!-- {#each num as n}
+      <p>{n}</p>
+    {/each} -->
+
+    <!-- <section use:hydrate>
+      <h1>Footer here</h1>
+      <Footer count={5} />
+    </section>
+
+    <div class="counter">
+      {@html counter}
+    </div>
+
+    {@html `<script id="data" type="application/json">${data}</script>`} -->
+
+    <p>
+      <script type="module" src="./script.ts"></script>
+    </p>
+  </body>
+</html>
 
 <style>
   .comment {
