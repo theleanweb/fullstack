@@ -20,8 +20,6 @@ import {
   vitePreprocess,
 } from "@sveltejs/vite-plugin-svelte";
 
-import * as Effect from "effect/Effect";
-import * as Either from "effect/Either";
 import * as Option from "effect/Option";
 import * as Array from "effect/ReadonlyArray";
 import * as String from "effect/String";
