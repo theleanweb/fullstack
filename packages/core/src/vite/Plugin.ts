@@ -80,6 +80,8 @@ const markdownPreprocessor = mdsvex() as PreprocessorGroup;
 
 const defaultPreprocessors = [markdownPreprocessor, vitePreprocess()];
 
+const secondaryBuildCache = new Map<string, string>();
+
 export default function fullstack(userConfig?: Options) {
   const root = ".cache";
 
@@ -88,7 +90,6 @@ export default function fullstack(userConfig?: Options) {
 
   const buildDir = path.join(root, "build");
   const generatedDir = path.join(root, "generated");
-
 
   const configResult = Config.parse(userConfig ?? {});
 
@@ -361,6 +362,7 @@ export default function fullstack(userConfig?: Options) {
       const assets = resolvedViteConfig.build.assetsDir;
       const dir = path.join(publicDirectory, assets);
       fsExtra.remove(dir);
+      secondaryBuildCache.clear();
     },
 
     async writeBundle() {
@@ -392,6 +394,10 @@ export default function fullstack(userConfig?: Options) {
 
         if (!isView(filename)) return;
 
+        if (secondaryBuildCache.has(id)) {
+          return secondaryBuildCache.get(id);
+        }
+
         const { dir, name } = path.parse(filename);
 
         const name_ = name + ".html";
@@ -401,8 +407,8 @@ export default function fullstack(userConfig?: Options) {
         const id_ = path.join(dir_, name_);
 
         fsExtra.ensureDirSync(dir_);
-        // fsExtra.copyFileSync(filename, id_);
-        fsExtra.writeFileSync(id_, _);
+        fsExtra.copyFileSync(filename, id_);
+        // fsExtra.writeFileSync(id_, _);
 
         // resolve imports from the original file location
         const resolve: Plugin = {
@@ -495,7 +501,9 @@ export default function fullstack(userConfig?: Options) {
         const module = output.find((_) => _.fileName == id_);
 
         if (module?.type == "asset") {
-          return { code: module.source.toString() };
+          const code = module.source.toString();
+          secondaryBuildCache.set(id, code);
+          return { code };
         }
       },
     },
