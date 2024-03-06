@@ -44,4 +44,22 @@ export function renderToString(_: SSRComponent, props?: SSRComponentProps) {
     try: () => unsafeRenderToString(_, props),
     catch: (e) => new RenderError(e),
   });
+export interface SSRComponentExport {
+  default: SSRComponent;
 }
+
+export async function resolveComponent(
+  path: string,
+  components: Record<
+    string,
+    SSRComponentExport | (() => Promise<SSRComponentExport>)
+  >
+) {
+  const entry = components[path];
+  return (typeof entry == "function" ? await entry() : entry).default;
+}
+
+export function makeFactory(f: (name: string) => SSRComponent | Promise<SSRComponent>) {
+  return async (name: string, props?: SSRComponentProps) => unsafeRenderToString(await f(name), props);
+}
+
