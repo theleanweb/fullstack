@@ -50,20 +50,44 @@ export interface SSRComponentExport {
   default: SSRComponent;
 }
 
-export async function resolveComponent(
+type Lazy<T> = () => Promise<T>;
+
+const isLazy = <T>(value: any): value is Lazy<T> => {
+  return typeof value == "function";
+};
+
+export function resolveComponent<T>(
   path: string,
-  components: Record<
+  components: T
+): T extends Record<string, infer R>
+  ? R extends Lazy<infer R1>
+    ? R1 extends SSRComponentExport
+      ? Promise<SSRComponent>
+      : never
+    : R extends SSRComponentExport
+    ? SSRComponent
+    : never
+  : never {
+  const components_ = components as Record<
     string,
-    SSRComponentExport | (() => Promise<SSRComponentExport>)
-  >
-) {
-  const entry = components[path];
-  return (typeof entry == "function" ? await entry() : entry).default;
+    SSRComponentExport | Lazy<SSRComponentExport>
+  >;
+  const entry = components_[path];
+  // @ts-expect-error
+  return isLazy(entry) ? entry().then((_) => _.default) : entry.default;
 }
 
-export function makeFactory(
-  f: (name: string) => SSRComponent | Promise<SSRComponent>
+export function makeFactory<T extends SSRComponent | Promise<SSRComponent>>(
+  f: (name: string) => T
 ) {
-  return async (name: string, props?: SSRComponentProps) =>
-    unsafeRenderToString(await f(name), props);
+  return (
+    name: string,
+    props?: SSRComponentProps
+  ): T extends Promise<SSRComponent> ? Promise<string> : string => {
+    const output = f(name);
+    // @ts-expect-error
+    return output instanceof Promise
+      ? output.then((_) => unsafeRenderToString(_, props))
+      : unsafeRenderToString(output, props);
+  };
 }
