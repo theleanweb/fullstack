@@ -51,3 +51,6 @@ Non SSR components can be imported normally i.e
 ```ts
 import About from "./views/about.svelte";
 ```
+
+## Limitations
+- Cannot use postcss along side svelte component style tag
