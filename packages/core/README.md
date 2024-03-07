@@ -37,13 +37,13 @@ export default defineConfig({
 
 ## Rendering
 
-To render svelte components as SSR components include `ssr` query in file import i.e
+To render svelte components to SSR output, include `ssr` query in file import i.e
 
 ```ts
 import About from "./views/about.svelte?ssr";
 ```
 
-Non SSR components can be imported normally i.e
+Non SSR components can be imported as usual i.e
 
 ```ts
 import About from "./views/about.svelte";
