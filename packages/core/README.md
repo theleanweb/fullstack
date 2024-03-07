@@ -32,8 +32,8 @@ export default defineConfig({
 - `publicEnvPrefix`: default `PUBLIC\_`
 - `extensions`: default `.svelte`, `.svx`
 - `serverEntry`: default src/entry.{js,ts,mjs,mts}
-- `preprocess`: see [here](https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#preprocess)
-- `compilerOptions`: see [here](https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#compileroptions)
+- `preprocess`: [documentation](https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#preprocess)
+- `compilerOptions`: [documentation](https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/config.md#compileroptions)
 
 ## Rendering
 
