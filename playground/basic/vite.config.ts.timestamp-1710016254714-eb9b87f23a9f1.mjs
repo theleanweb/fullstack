@@ -1,0 +1,19 @@
+// vite.config.ts
+import { defineConfig } from "file:///Users/joshuaamaju/Desktop/GitHub%20Orgs/the%20lean%20web/fullstack/node_modules/.pnpm/vite@5.0.11_sass@1.70.0/node_modules/vite/dist/node/index.js";
+import UnoCSS from "file:///Users/joshuaamaju/Desktop/GitHub%20Orgs/the%20lean%20web/fullstack/node_modules/.pnpm/unocss@0.58.5_postcss@8.4.33_vite@5.0.11/node_modules/unocss/dist/vite.mjs";
+import extractorSvelte from "file:///Users/joshuaamaju/Desktop/GitHub%20Orgs/the%20lean%20web/fullstack/node_modules/.pnpm/@unocss+extractor-svelte@0.58.5/node_modules/@unocss/extractor-svelte/dist/index.mjs";
+import { fullstack } from "file:///Users/joshuaamaju/Desktop/GitHub%20Orgs/the%20lean%20web/fullstack/packages/core/dist/index.js";
+import simpleScope from "file:///Users/joshuaamaju/Desktop/GitHub%20Orgs/the%20lean%20web/fullstack/node_modules/.pnpm/vite-plugin-simple-scope@1.0.4/node_modules/vite-plugin-simple-scope/index.js";
+import "file:///Users/joshuaamaju/Desktop/GitHub%20Orgs/the%20lean%20web/fullstack/node_modules/.pnpm/@vituum+vite-plugin-tailwindcss@1.1.0/node_modules/@vituum/vite-plugin-tailwindcss/index.js";
+var vite_config_default = defineConfig({
+  // base: "/static",
+  plugins: [
+    UnoCSS({ extractors: [extractorSvelte()] }),
+    fullstack(),
+    simpleScope()
+  ]
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcudHMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCIvVXNlcnMvam9zaHVhYW1hanUvRGVza3RvcC9HaXRIdWIgT3Jncy90aGUgbGVhbiB3ZWIvZnVsbHN0YWNrL3BsYXlncm91bmQvYmFzaWNcIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfZmlsZW5hbWUgPSBcIi9Vc2Vycy9qb3NodWFhbWFqdS9EZXNrdG9wL0dpdEh1YiBPcmdzL3RoZSBsZWFuIHdlYi9mdWxsc3RhY2svcGxheWdyb3VuZC9iYXNpYy92aXRlLmNvbmZpZy50c1wiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9pbXBvcnRfbWV0YV91cmwgPSBcImZpbGU6Ly8vVXNlcnMvam9zaHVhYW1hanUvRGVza3RvcC9HaXRIdWIlMjBPcmdzL3RoZSUyMGxlYW4lMjB3ZWIvZnVsbHN0YWNrL3BsYXlncm91bmQvYmFzaWMvdml0ZS5jb25maWcudHNcIjtpbXBvcnQgeyBkZWZpbmVDb25maWcgfSBmcm9tIFwidml0ZVwiO1xuXG5pbXBvcnQgVW5vQ1NTIGZyb20gXCJ1bm9jc3Mvdml0ZVwiO1xuaW1wb3J0IGV4dHJhY3RvclN2ZWx0ZSBmcm9tIFwiQHVub2Nzcy9leHRyYWN0b3Itc3ZlbHRlXCI7XG5cbmltcG9ydCB7IGZ1bGxzdGFjayB9IGZyb20gXCJAbGVhbndlYi9mdWxsc3RhY2tcIjtcbmltcG9ydCBzaW1wbGVTY29wZSBmcm9tIFwidml0ZS1wbHVnaW4tc2ltcGxlLXNjb3BlXCI7XG5pbXBvcnQgdGFpbHdpbmRjc3MgZnJvbSBcIkB2aXR1dW0vdml0ZS1wbHVnaW4tdGFpbHdpbmRjc3NcIjtcblxuZXhwb3J0IGRlZmF1bHQgZGVmaW5lQ29uZmlnKHtcbiAgLy8gYmFzZTogXCIvc3RhdGljXCIsXG4gIHBsdWdpbnM6IFtcbiAgICBVbm9DU1MoeyBleHRyYWN0b3JzOiBbZXh0cmFjdG9yU3ZlbHRlKCldIH0pLFxuICAgIGZ1bGxzdGFjaygpLFxuICAgIHNpbXBsZVNjb3BlKCksXG4gIF0sXG59KTtcbiJdLAogICJtYXBwaW5ncyI6ICI7QUFBa2EsU0FBUyxvQkFBb0I7QUFFL2IsT0FBTyxZQUFZO0FBQ25CLE9BQU8scUJBQXFCO0FBRTVCLFNBQVMsaUJBQWlCO0FBQzFCLE9BQU8saUJBQWlCO0FBQ3hCLE9BQXdCO0FBRXhCLElBQU8sc0JBQVEsYUFBYTtBQUFBO0FBQUEsRUFFMUIsU0FBUztBQUFBLElBQ1AsT0FBTyxFQUFFLFlBQVksQ0FBQyxnQkFBZ0IsQ0FBQyxFQUFFLENBQUM7QUFBQSxJQUMxQyxVQUFVO0FBQUEsSUFDVixZQUFZO0FBQUEsRUFDZDtBQUNGLENBQUM7IiwKICAibmFtZXMiOiBbXQp9Cg==

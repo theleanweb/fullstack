@@ -32,6 +32,7 @@
     "typescript": "^5.3.3",
     "vite": "^5.0.10",
     "vite-plugin-browser-sync": "^2.0.1",
+    "vite-plugin-progress": "^0.0.7",
     "vite-plugin-simple-scope": "^1.0.4",
     "vite-tsconfig-paths": "^4.2.3"
   }
