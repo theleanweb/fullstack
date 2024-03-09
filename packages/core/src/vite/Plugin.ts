@@ -322,6 +322,8 @@ export default function fullstack(userConfig?: Options) {
     load: {
       order: "pre",
       handler(id) {
+        if (!config.islands) return;
+
         const info = this.getModuleInfo(id);
 
         if (info?.meta.type == "island") {
@@ -341,7 +343,13 @@ export default function fullstack(userConfig?: Options) {
          */
         const { filename } = parseRequest(id);
 
-        if (resolvedViteConfig.command == "serve" || !isView(filename)) return;
+        if (
+          !config.islands ||
+          resolvedViteConfig.command == "serve" ||
+          !isView(filename)
+        ) {
+          return;
+        }
 
         const cached = islandCache.get(id);
 
@@ -406,6 +414,16 @@ export default function fullstack(userConfig?: Options) {
         if (secondaryBuildCache.has(id)) {
           return secondaryBuildCache.get(id);
         }
+
+        // const regex =
+        //   /<(script\s+type\s*=\s*['"]module['"]\s+src\s*=\s*['"]\.\S*['"])|(link\s+rel\s*=\s*['"]stylesheet['"]\s+href\s*=\s*['"]\.\S*['"])/g;
+
+        const regex =
+          /(?:!--\s*)\s*<(script\s+type\s*=\s*['"]module['"]\s+src\s*=\s*['"]\.\S*['"])|(link\s+rel\s*=\s*['"]stylesheet['"]\s+href\s*=\s*['"]\.\S*['"])(?![^]*?-->)/;
+
+        const hasAsset = _.match(regex);
+
+        if (!hasAsset) return;
 
         const { dir, name } = path.parse(filename);
 
@@ -555,7 +573,7 @@ export default function fullstack(userConfig?: Options) {
     preprocess: [
       ...preprocessors,
       AssetRef.preprocessor({ cwd, config: configProxy }),
-      Island.preprocessor({ cwd, config: configProxy }),
+      config.islands ? Island.preprocessor({ cwd, config: configProxy }) : {},
     ],
     compilerOptions: {
       ...compilerOptions,
