@@ -2,6 +2,7 @@ import z from "zod";
 import { CompileOptions, PreprocessorGroup } from "svelte/compiler";
 
 export const options = z.object({
+  islands: z.boolean().default(false),
   publicEnvPrefix: z.string().default("PUBLIC_"),
   extensions: z.array(z.string()).default([".svelte", ".svx"]),
   serverEntry: z.string().default("src/entry.{js,ts,mjs,mts}"),
