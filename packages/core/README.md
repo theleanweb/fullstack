@@ -50,4 +50,4 @@ import About from "./views/about.svelte";
 ```
 
 ## Limitations
-- Cannot use postcss along side svelte component style tag
+- ~~Cannot use postcss along side svelte component style tag~~
