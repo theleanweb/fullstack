@@ -7,8 +7,6 @@ import router from "./dist/index.js";
 
 router.use("/*", serveStatic({ root: "./public" }));
 
-const server = serve({ fetch: router.fetch, port: 4000 });
-
-server.listen(() => {
-  console.log("Server running");
+serve(router, (info) => {
+  console.log(`Server running ${info.address}:${info.port}`);
 });

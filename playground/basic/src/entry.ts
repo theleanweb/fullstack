@@ -61,22 +61,17 @@ const tele: Handler = async ctx => {
 	});
 }
 
-app.get('/_telefunc', tele)
-app.post('/_telefunc', tele)
+// app.get('/_telefunc', tele)
+// app.post('/_telefunc', tele)
 
 app.get("/", async (ctx) => {
   const session = await getSession(ctx.req.raw.headers.get("Cookie"));
 
   session.flash("error", "Invalid username/password");
 
-  try {
-    console.log(Async.render({}));
-  } catch (error) {
-    console.log(error);
-  }
-
   return ctx.html(Render.unsafeRenderToString(Home, {count: getCount()}), {
     headers: {
+      "Content-Type": "text/html",
       "Set-Cookie": await commitSession(session),
     },
   });
