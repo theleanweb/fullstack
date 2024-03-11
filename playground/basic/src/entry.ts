@@ -1,7 +1,11 @@
-import { Hono } from "hono";
+import { Hono, type Handler } from "hono";
 
 import { Render } from "@leanweb/fullstack/runtime";
 import { createCookieSessionStorage } from "@leanweb/fullstack/runtime/Session";
+
+import { telefunc } from 'telefunc';
+
+import {getCount} from './actions/count'
 
 import Async from "./views/async.svelte?ssr";
 import Home from "./views/home.svelte?ssr";
@@ -40,6 +44,26 @@ console.log(Async);
 
 const app = new Hono();
 
+const tele: Handler = async ctx => {
+  const response = await telefunc({
+		url: ctx.req.url,
+		method: ctx.req.method,
+		body: await ctx.req.text(),
+		context: {
+			// We pass the `context` object here, see https://telefunc.com/getContext
+			someContext: 'hello'
+		}
+	});
+
+	return new Response(response.body, {
+		headers: new Headers({ contentType: response.contentType }),
+		status: response.statusCode
+	});
+}
+
+app.get('/_telefunc', tele)
+app.post('/_telefunc', tele)
+
 app.get("/", async (ctx) => {
   const session = await getSession(ctx.req.raw.headers.get("Cookie"));
 
@@ -51,7 +75,7 @@ app.get("/", async (ctx) => {
     console.log(error);
   }
 
-  return ctx.html('Go to <a href="/home">About 4</a>', {
+  return ctx.html(Render.unsafeRenderToString(Home, {count: getCount()}), {
     headers: {
       "Set-Cookie": await commitSession(session),
     },

@@ -1,19 +1,15 @@
-import "virtual:uno.css";
+import { onCounterIncrement } from "../actions/counter.telefunc"
 
-import Footer from "./footer.svelte";
+const dis = document.querySelector('.dis')
+const inc = document.querySelector('.inc')
+const dec = document.querySelector('.dec')
 
-import Island from "./Island.svelte";
+inc?.addEventListener('click', async () => {
+    const r = await onCounterIncrement(+1)
+    dis!.textContent = r.toString()
+})
 
-// import { SERVER } from "$env/private";
-
-// const data = JSON.parse(document.getElementById("data")!.textContent!);
-
-// const counter = new Island({
-//   hydrate: true,
-//   props: { count: 0 },
-//   target: document.querySelector(".island")!,
-// });
-
-// console.log(Island);
-
-// console.log(SERVER);
+dec?.addEventListener('click', async () => {
+    const r = await onCounterIncrement(-1)
+    dis!.textContent = r.toString()
+})
