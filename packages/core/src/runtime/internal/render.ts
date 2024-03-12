@@ -77,17 +77,22 @@ export function resolveComponent<T>(
   return isLazy(entry) ? entry().then((_) => _.default) : entry.default;
 }
 
+export interface Views {
+  // [k:string]: SSRComponentProps
+}
+
 export function makeFactory<T extends SSRComponent | Promise<SSRComponent>>(
   f: (name: string) => T
 ) {
-  return (
-    name: string,
-    props?: SSRComponentProps
+  return <V extends Views, K extends keyof V>(
+    name: K,
+    props?: V[K]
   ): T extends Promise<SSRComponent> ? Promise<string> : string => {
+    // @ts-expect-error
     const output = f(name);
     // @ts-expect-error
     return output instanceof Promise
-      ? output.then((_) => unsafeRenderToString(_, props))
-      : unsafeRenderToString(output, props);
+      ? output.then((_) => unsafeRenderToString(_, props as SSRComponentProps))
+      : unsafeRenderToString(output, props as SSRComponentProps);
   };
 }

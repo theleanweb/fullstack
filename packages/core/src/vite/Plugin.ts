@@ -34,6 +34,8 @@ import * as Island from "./Island.js";
 import { devServer } from "./devServer/DevServer.js";
 import * as AssetRef from "./devServer/assetRef/AssetRef.js";
 import { previewServer } from "./preview/Server.js";
+import {views as pluginViews} from './views.js'
+import { dedent } from "ts-dedent";
 // import { compressFile } from "./Compress.js";
 
 // interface Manifest {
@@ -88,7 +90,6 @@ export default function fullstack(userConfig?: Options) {
 
   const buildDir = path.join(root, "build");
   const generatedDir = path.join(root, "generated");
-
 
   const configResult = Config.parse(userConfig ?? {});
 
@@ -555,6 +556,7 @@ export default function fullstack(userConfig?: Options) {
     // We need island preprocessing to run before our inner build during production build
     pluginIsland,
     pluginBuild,
+    pluginViews,
     pluginPreview,
     svelte(svelteOptions),
   ];
