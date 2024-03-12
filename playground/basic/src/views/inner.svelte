@@ -10,6 +10,6 @@
     <title>Document</title>
   </head>
   <body>
-    <Footer __island />
+    <Footer />
   </body>
 </html>
