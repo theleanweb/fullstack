@@ -418,6 +418,11 @@ export default function fullstack(userConfig?: Options) {
         // const regex =
         //   /<(script\s+type\s*=\s*['"]module['"]\s+src\s*=\s*['"]\.\S*['"])|(link\s+rel\s*=\s*['"]stylesheet['"]\s+href\s*=\s*['"]\.\S*['"])/g;
 
+        /**
+         * Regular expression to match any module script or link[rel=stylesheet] tag
+         *
+         * Heuristic to determine if a component needs processing of client assets
+         */
         const regex =
           /(?:!--\s*)\s*<(script\s+type\s*=\s*['"]module['"]\s+src\s*=\s*['"]\.\S*['"])|(link\s+rel\s*=\s*['"]stylesheet['"]\s+href\s*=\s*['"]\.\S*['"])(?![^]*?-->)/;
 
