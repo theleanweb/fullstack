@@ -4,7 +4,7 @@ import {
   SSRComponentProps,
 } from "../types.js";
 
-import * as internal from "./internal/render.js";
+import * as internal from "./internal/render/render.js";
 
 export const render: (_: SSRComponentOutput) => string = internal.render;
 
@@ -15,4 +15,4 @@ export function unsafeRenderToString(
   return internal.unsafeRenderToString(componentOrOutput, props);
 }
 
-export {SSRComponentExport, resolveComponent, makeFactory, Views} from './internal/render.js'
+export {SSRComponentExport, resolveComponent, makeFactory, Views} from './internal/render/render.js'

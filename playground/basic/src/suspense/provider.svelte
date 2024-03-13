@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-  declare function __callback__(
+  declare function __suspend__(
     ...args: Parameters<SuspenseStore["set"]>
   ): number;
 </script>
@@ -8,7 +8,7 @@
   import { setContext } from "svelte";
   import type { SuspenseStore } from "./types";
 
-  const send = __callback__;
+  const send = __suspend__;
 
   setContext<SuspenseStore>("suspense_store", {
     set: (args) => send(args),

@@ -5,7 +5,7 @@ import {
   SSRComponent,
   SSRComponentProps,
   SSRComponentOutput,
-} from "../../types.js";
+} from "../../../types.js";
 
 export function render(_: SSRComponentOutput) {
   const document = load(_.html);

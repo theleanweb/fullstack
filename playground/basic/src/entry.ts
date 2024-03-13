@@ -1,4 +1,4 @@
-import { Hono, type Handler, type Context } from "hono";
+import { Hono, type Context, type Handler } from "hono";
 import { stream } from "hono/streaming";
 
 import { Render } from "@leanweb/fullstack/runtime";
@@ -6,9 +6,7 @@ import { createCookieSessionStorage } from "@leanweb/fullstack/runtime/Session";
 
 import { telefunc } from "telefunc";
 
-import { getCount } from "./actions/count";
 
-import Async from "./views/async.svelte?ssr";
 import Home from "./views/home.svelte?ssr";
 // import About from "./views/about.svx?ssr";
 import Sus from "./views/sus/sus.svelte?ssr";
@@ -28,11 +26,9 @@ export const render = makeFactory((name) => {
   return resolveComponent(`./views/${name}.svelte`, components);
 });
 
-// render('home', {name: 'joe'})
-
 const encoder = new TextEncoder();
 
-function createReadableStreamFromAsyncGenerator(output) {
+function createReadableStreamFromAsyncGenerator(output: AsyncIterableIterator<any>) {
   return new ReadableStream({
     async start(controller) {
       while (true) {
@@ -54,6 +50,7 @@ export function renderToStream(
   _: SSRComponent,
   props?: SSRComponentProps
 ) {
+  let currentId = 0;
   let pending = new Set<number>();
 
   let streamController: ReadableStreamDefaultController<
@@ -74,14 +71,21 @@ export function renderToStream(
     );
   }
 
-  globalThis.__callback__ = function __callback__({
+  const cleanup = () => {
+    streamController.close();
+    // @ts-expect-error
+    delete globalThis.__suspend__
+  }
+
+  // @ts-expect-error
+  globalThis.__suspend__ = function suspend({
     props,
     component,
   }: {
     component: any;
     props: Record<string, any>;
   }) {
-    const id = pending.size + 1;
+    const id = currentId++;
 
     pending.add(id);
 
@@ -90,46 +94,58 @@ export function renderToStream(
         return [name, is_promise(val) ? await val : val];
       })
     ).then((props) => {
-      pending.delete(id);
-
-      const context = new Map();
-
-      context.set("suspense_store", { set: (args: any) => __callback__(args) });
-
-      const result = component.render(Object.fromEntries(props), { context });
+      const result = component.render(Object.fromEntries(props));
       streamController?.enqueue?.([id, result.html]);
-      if (pending.size <= 0) streamController.close();
-    });
+    }).catch(e => {
+      streamController.error(e)
+    })
 
     return id;
   };
 
   async function* ren() {
-    yield _.render(props).html;
+    yield Render.unsafeRenderToString(_, props);
 
+    // Immediately close the stream if Suspense was not used.
+    if (pending.size <= 0) cleanup()
+
+    // Send a script to query for the fallback and replace with content.
+		// This is grouped into a global __SUSPENSE_INSERT__
+		// to reduce the payload size for multiple suspense boundaries.
+		yield `
+    <script>
+      window.__SUSPENSE_INSERT__ = function (idx) {
+        var script = document.querySelector('[data-suspense-insert="' + idx + '"]')
+        var template = document.querySelector('[data-suspense="' + idx + '"]');
+        var dest = document.querySelector('[data-suspense-fallback="' + idx + '"]');
+        dest.replaceWith(template.content);
+        template.remove();
+        script.remove();
+      }
+    </script>
+    `;
+
+    // @ts-expect-error
     for await (const [id, value] of _stream) {
       yield `
       <template data-suspense="${id}">${value}</template>
-      <script>
-      (() => {
-        const template = document.querySelector('template[data-suspense="${id}"]');
-        const fallback = document.querySelector('[data-fallback="${id}"]');
-        fallback.replaceWith(template.content);
-        template.remove();
-      })()
-      </script>
+      <script data-suspense-insert="${id}">window.__SUSPENSE_INSERT__(${id});</script>
       `;
+
+      pending.delete(id);
+
+      if (pending.size <= 0) cleanup()
     }
   }
 
-  // return new Response(ren(), {
-  //   headers: {'Content-Type': 'text/html'}
-  // })
+  return new Response(createReadableStreamFromAsyncGenerator(ren()), {
+    headers: {'Content-Type': 'text/html'}
+  })
 
-  return stream(ctx, async (stream) => {
-    ctx.res.headers.set("Content-Type", "text/html");
-    await stream.pipe(createReadableStreamFromAsyncGenerator(ren()));
-  });
+  // return stream(ctx, async (stream) => {
+  //   ctx.res.headers.set("Content-Type", "text/html");
+  //   await stream.pipe(createReadableStreamFromAsyncGenerator(ren()));
+  // });
 }
 
 // renderToStream(Sus)
@@ -192,7 +208,9 @@ app.get("/", async (ctx) => {
 
   session.flash("error", "Invalid username/password");
 
-  return renderToStream(ctx, Sus);
+  // return renderToStream(ctx, Sus);
+  
+  return ctx.html(Render.unsafeRenderToString(Sus))
 
   // return ctx.html(Render.unsafeRenderToString(Home, {count: getCount()}), {
   //   headers: {
