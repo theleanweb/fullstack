@@ -50,4 +50,10 @@ import About from "./views/about.svelte";
 ```
 
 ## Limitations
+
 - ~~Cannot use postcss along side svelte component style tag~~
+- Types using dynamic import i.e
+
+```ts
+let a: import("some-module").Type;
+```
