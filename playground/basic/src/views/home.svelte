@@ -1,4 +1,7 @@
 <script lang="ts">
+  import Boundary from '../error-boundary/DefaultBoundary.js';
+  import Footer from './footer.svelte';
+  
 	export let count: number;
   export let name: string
 </script>
@@ -15,7 +18,7 @@
 <body>
   <div class="counter bg-red-500">
     <span>Counter: <span class='dis'>{count}</span></span>
-    <button class='dec'>-1</button>
+    <button data-fallback='0' class='dec'>-1</button>
     <button class='inc'>+1</button>
   </div>
 </body>

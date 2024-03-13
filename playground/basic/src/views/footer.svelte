@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import Count from "../count.svelte";
-
+  
   export let count: number = 0;
 
   let doubled: number;

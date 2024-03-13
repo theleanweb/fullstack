@@ -152,6 +152,9 @@ importers:
 
   playground/basic:
     dependencies:
+      '@crownframework/svelte-error-boundary':
+        specifier: ^1.0.3
+        version: 1.0.3
       '@hono/node-server':
         specifier: ^1.4.0
         version: 1.4.0
@@ -919,6 +922,10 @@ packages:
       sisteransi: 1.0.5
     bundledDependencies:
       - is-unicode-supported
+
+  /@crownframework/svelte-error-boundary@1.0.3:
+    resolution: {integrity: sha512-ZtfYF9if48Ok8BTx/fn7bERJFKHKO6Ih5d/fkY6/pC3DQEnJq4vy6JOBFcisnpKYcZbjG5F/D4r06kqX7JKyqw==}
+    dev: false
 
   /@csstools/cascade-layer-name-parser@1.0.8(@csstools/css-parser-algorithms@2.6.0)(@csstools/css-tokenizer@2.2.3):
     resolution: {integrity: sha512-xHxXavWvXB5nAA9IvZtjEzkONM3hPXpxqYK4cEw60LcqPiFjq7ZlEFxOyYFPrG4UdANKtnucNtRVDy7frjq6AA==}
