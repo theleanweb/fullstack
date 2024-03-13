@@ -498,11 +498,18 @@ export default function fullstack(userConfig?: Options) {
         // const quietLogger = Vite.createLogger();
         // quietLogger.info = () => undefined;
 
+        const build = resolvedViteConfig.build;
+
         const result = await Vite.build({
           configFile: false,
           clearScreen: false,
           logLevel: "silent",
+          css: resolvedViteConfig.css,
+          json: resolvedViteConfig.json,
           base: resolvedViteConfig.base,
+          define: resolvedViteConfig.define,
+          esbuild: resolvedViteConfig.esbuild,
+          optimizeDeps: resolvedViteConfig.optimizeDeps,
           envPrefix: resolvedViteConfig.envPrefix as string[],
           // customLogger: quietLogger,
           // We apply obfuscation to prevent vite:build-html plugin from freaking out
@@ -519,7 +526,16 @@ export default function fullstack(userConfig?: Options) {
             outDir: buildDir,
             emptyOutDir: false,
             copyPublicDir: false,
+            minify: build.minify,
+            // assetsDir: build.assetsDir,
+            cssMinify: build.cssMinify,
+            cssTarget: build.cssTarget,
             rollupOptions: { input: id_ },
+            cssCodeSplit: build.cssCodeSplit,
+            modulePreload: build.modulePreload,
+            assetsInlineLimit: build.assetsInlineLimit,
+            // chunkSizeWarningLimit: build.chunkSizeWarningLimit,
+            dynamicImportVarsOptions: build.dynamicImportVarsOptions,
           },
         });
 
