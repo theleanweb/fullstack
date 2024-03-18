@@ -1,5 +1,19 @@
 # @leanweb/fullstack
 
+## 0.4.0
+
+### Minor Changes
+
+- faa38dd: Infer typescript typeof final output of render function, depending on the glob import strategy
+- 85e121f: Replace development environment polyfill with remix polyfill
+- 81f2c04: Add views and props intellisense plugin
+- 9a273ff: Add cookie, session and flash handling utilities
+- 954030b: Add islands feature
+
+### Patch Changes
+
+- 3afa5d5: Handle svelte component style tag preprocessing properly
+
 ## 0.3.1
 
 ### Patch Changes
