@@ -3,3 +3,9 @@
 </script>
 
 <p>Inner {name}</p>
+
+<style>
+  p {
+    color: red;
+  }
+</style>

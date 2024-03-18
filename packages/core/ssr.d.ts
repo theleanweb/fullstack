@@ -6,8 +6,13 @@ interface SSRComponentOutput {
 
 type SSRComponentProps = Record<string, any>;
 
+export type SSRComponentOptions = {
+  $$slots?: Record<string, any>;
+  context?: Map<string, any>;
+};
+
 interface SSRComponent {
-  render(props: SSRComponentProps): SSRComponentOutput;
+  render(props: SSRComponentProps, options?: SSRComponentOptions): SSRComponentOutput;
 }
 
 declare module "*.svelte?ssr" {

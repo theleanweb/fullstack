@@ -17,7 +17,7 @@
   <Suspense name={delayed(10000, 3000)} component={Async}>
     <p slot="fallback">loading...</p>
 
-    <Suspense name={delayed(10000, 3000)} component={Async}>
+    <Suspense name={delayed(20000, 3000)} component={Async}>
       <p slot="fallback">loading...</p>
     </Suspense>
   </Suspense>

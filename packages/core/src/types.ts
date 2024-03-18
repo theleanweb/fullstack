@@ -6,6 +6,14 @@ export interface SSRComponentOutput {
 
 export type SSRComponentProps = Record<string, any>;
 
+export type SSRComponentOptions = {
+  $$slots?: Record<string, any>;
+  context?: Map<string, any>;
+};
+
 export interface SSRComponent {
-  render(props: SSRComponentProps): SSRComponentOutput;
+  render(
+    props?: SSRComponentProps,
+    options?: SSRComponentOptions
+  ): SSRComponentOutput;
 }

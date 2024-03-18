@@ -1,10 +1,5 @@
-<script lang="ts" context="module">
-  declare function __suspend__(
-    ...args: Parameters<SuspenseStore["set"]>
-  ): number;
-</script>
-
 <script lang="ts">
+  import { getContext } from "svelte";
   import type { SuspenseStore } from "./types";
 
   function is_promise(value: any): value is Promise<any> {
@@ -15,36 +10,32 @@
     );
   }
 
-  const suspend = "__suspend__" in globalThis ? __suspend__ : null;
-
-  console.log(suspend);
+  const suspend =
+    getContext<(...args: Parameters<SuspenseStore["set"]>) => number>(
+      "__suspend__"
+    );
 
   export let component: any;
 
   const id = suspend?.({ props: $$restProps, component }) ?? null;
-
-  const promises =
-    id == null
-      ? Promise.all(
-          Object.entries($$restProps).map(async ([name, val]) => {
-            return [name, is_promise(val) ? await val : val];
-          })
-        )
-      : null;
 </script>
 
 {#if id !== null}
   <div data-suspense-fallback={id} style="display: contents;">
     <slot name="fallback" />
   </div>
-{:else if promises}
+{:else}
+  {@const promises = Promise.all(
+    Object.entries($$restProps).map(async ([n, v]) => {
+      return [n, is_promise(v) ? await v : v];
+    })
+  )}
+
   {#await promises}
     <slot name="fallback" />
   {:then props}
     <svelte:component this={component} {...Object.fromEntries(props)} />
   {/await}
-{:else}
-  <slot name="fallback" />
 {/if}
 
 <slot />

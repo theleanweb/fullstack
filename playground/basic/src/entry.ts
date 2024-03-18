@@ -46,7 +46,6 @@ function createReadableStreamFromAsyncGenerator(output: AsyncIterableIterator<an
 }
 
 export function renderToStream(
-  ctx: Context,
   _: SSRComponent,
   props?: SSRComponentProps
 ) {
@@ -73,12 +72,9 @@ export function renderToStream(
 
   const cleanup = () => {
     streamController.close();
-    // @ts-expect-error
-    delete globalThis.__suspend__
   }
 
-  // @ts-expect-error
-  globalThis.__suspend__ = function suspend({
+  const suspend = function suspend({
     props,
     component,
   }: {
@@ -103,8 +99,10 @@ export function renderToStream(
     return id;
   };
 
+  const context = new Map([['__suspend__', suspend]])
+
   async function* ren() {
-    yield Render.unsafeRenderToString(_, props);
+    yield Render.render(_.render(props, {context}))
 
     // Immediately close the stream if Suspense was not used.
     if (pending.size <= 0) cleanup()
@@ -208,9 +206,9 @@ app.get("/", async (ctx) => {
 
   session.flash("error", "Invalid username/password");
 
-  // return renderToStream(ctx, Sus);
+  return Render.renderToStream(Sus);
   
-  return ctx.html(Render.unsafeRenderToString(Sus))
+  // return ctx.html(Render.unsafeRenderToString(Sus))
 
   // return ctx.html(Render.unsafeRenderToString(Home, {count: getCount()}), {
   //   headers: {
