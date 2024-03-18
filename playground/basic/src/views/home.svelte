@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let count: number;
+  export let name: string
 </script>
 
 <!DOCTYPE html>

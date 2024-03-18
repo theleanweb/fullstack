@@ -15,4 +15,4 @@ export function unsafeRenderToString(
   return internal.unsafeRenderToString(componentOrOutput, props);
 }
 
-export {SSRComponentExport, resolveComponent, makeFactory} from './internal/render.js'
+export {SSRComponentExport, resolveComponent, makeFactory, Views} from './internal/render.js'
