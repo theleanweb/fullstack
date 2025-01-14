@@ -2,6 +2,9 @@
 
 > Web development like days of old, with the good parts of modern tooling
 
+> [!IMPORTANT]
+> Project has moved to [stack54](https://github.com/joshamaju/stack54)
+
 ### Packages
 
 | Package                                                                           | Changelog                                                     |
